@@ -170,23 +170,67 @@ nav.tabs .desk-only{display:none}
 .avatar.lg{width:56px;height:56px;font-size:26px}.avatar.lg::after{width:15px;height:15px;border-width:3px}
 
 /* ── Pizarra ── */
+.pz-layout{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+.pz-side{padding:10px 12px;align-self:start}
+.side-h{display:flex;align-items:center;gap:8px}
+.side-h h3{flex:0 0 auto}
+.side-h .cnt{font-size:12.5px;color:var(--ink-3);margin-right:auto;white-space:nowrap}
+.side-h button{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-3)}
+.side-h button:hover{background:var(--panel-2);color:var(--ink)}
+.side-h button .ti{font-size:17px}
+.side-body{margin-top:10px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.pz-side.fold .side-body{display:none}
+.pz-side.fold .side-h #sideFold .ti{transform:rotate(180deg)}
+.side-tip{font-size:12.5px;flex:0 0 auto;margin:0}
+.tools .tb.size-tb{align-items:center;gap:8px;padding:3px 12px 3px 10px}
+.tools .tb.size-tb .ti{font-size:19px;color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:110px;height:30px;padding:0;border:0;background:transparent;box-shadow:none}
+input[type=range]:focus{box-shadow:none}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line-soft)}
+input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line-soft)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--navy-700);border:2px solid #fff;box-shadow:var(--shadow-sm);margin-top:-7px;cursor:grab}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--navy-700);border:2px solid #fff;box-shadow:var(--shadow-sm);cursor:grab}
+@media (max-width:640px){input[type=range]{width:84px}}
+.tools .tb.rival-tb button{width:auto;height:36px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0 12px;border-radius:9px;font-weight:600;font-size:14px;color:var(--ink-2);white-space:nowrap;overflow:hidden}
+.tools .tb.rival-tb button:hover{background:var(--panel-2);color:var(--ink)}
+.tools .tb.rival-tb button .ti{font-size:18px;color:var(--bad);flex-shrink:0}
+@media (max-width:640px){.tools .tb.rival-tb button span{display:none}.tools .tb.rival-tb button{width:40px;padding:0}}
+@media (min-width:900px){
+  .pz-layout{grid-template-columns:minmax(0,1fr) 238px}
+  .pz-layout.left{grid-template-columns:238px minmax(0,1fr)}
+  .pz-layout.left .pz-side{order:-1}
+  .pz-side{position:sticky;top:calc(var(--top-h) + 78px);max-height:calc(100dvh - var(--top-h) - 110px);display:flex;flex-direction:column;overflow:hidden}
+  .pz-side .bench-list{flex-direction:column;flex-wrap:nowrap;align-items:stretch;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1 1 auto;padding-right:4px}
+  .pz-side .bchip{justify-content:flex-start;width:100%;min-width:0}
+  .pz-side .bchip span:not(.avatar):not(.tag){overflow:hidden;text-overflow:ellipsis}
+}
+@media (max-width:899px){
+  .pz-side{order:-1;position:sticky;top:calc(var(--top-h) + 4px);z-index:13;box-shadow:var(--shadow)}
+  .pz-side .bench-list{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+  .pz-side .bench-list::-webkit-scrollbar{display:none}
+  .side-rival{grid-template-columns:1fr 1fr}
+  #sideSwap{display:none}
+}
 .boards{display:grid;gap:14px}
 .boards.multi{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
-.board{background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:10px;box-shadow:var(--shadow-sm);transition:border-color .18s ease,box-shadow .18s ease;animation:rise .4s var(--ease-out) both}
+.board{background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:10px;box-shadow:var(--shadow-sm);transition:border-color .18s ease,box-shadow .18s ease;animation:rise .4s var(--ease-out) both;display:flex;flex-direction:column}
+.board .pitch-wrap{margin-top:auto}
 .boards.multi .board.active{border-color:var(--navy-500);box-shadow:0 0 0 3px rgba(47,102,174,.14)}
-.board-h{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.board-h{display:flex;align-items:center;gap:5px;margin-bottom:10px;flex-wrap:wrap;min-height:36px}
 .board-h .bname{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:19px;padding:2px 6px;border-radius:8px;flex:1;min-width:80px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .board-h .bname:hover{background:var(--panel-2)}
-.board-h .bcount{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;color:var(--ink-3);padding:2px 8px;border-radius:999px;background:var(--panel-2)}
+.board-h .bcount{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;color:var(--ink-3);padding:2px 7px;border-radius:999px;background:var(--panel-2);white-space:nowrap}
 .board-h .bcount.over{color:var(--warn);background:var(--warn-bg)}
-.board-h .bform{width:auto;padding:6px 26px 6px 9px;font-size:13px;font-weight:600;border-radius:9px}
-.board-h [data-a]{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2)}
+.board-h .bcount.rival{color:var(--bad);background:var(--bad-bg)}
+.board-h .bform{width:auto;max-width:110px;padding:6px 24px 6px 8px;font-size:13px;font-weight:600;border-radius:9px}
+.board-h [data-a]{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2);flex-shrink:0}
 .board-h [data-a]:hover{background:var(--panel-2);color:var(--ink)}
 .board-h [data-a].danger:hover{background:var(--bad-bg);color:var(--bad)}
 .board-h [data-a] .ti{font-size:18px}
-.pitch-wrap{position:relative;width:100%;margin:0 auto;aspect-ratio:68/105;max-height:68dvh;filter:drop-shadow(0 12px 22px rgba(11,31,58,.28))}
-.pitch-wrap.f7{aspect-ratio:50/70;max-height:60dvh}
-.boards.multi .pitch-wrap{max-height:52dvh}
+.pitch-wrap{position:relative;margin:0 auto;aspect-ratio:68/105;width:min(100%,calc(76dvh*68/105));filter:drop-shadow(0 12px 22px rgba(11,31,58,.28))}
+.pitch-wrap.f7{aspect-ratio:50/70;width:min(100%,calc(72dvh*50/70))}
+.boards.multi .pitch-wrap{width:min(100%,calc(66dvh*68/105))}
+.boards.multi .pitch-wrap.f7{width:min(100%,calc(62dvh*50/70))}
 .pitch{position:absolute;inset:0;border-radius:10px;overflow:hidden;touch-action:none;background:repeating-linear-gradient(0deg,var(--pitch-a) 0 10%,var(--pitch-b) 10% 20%);transition:box-shadow .15s ease}
 .pitch.hot{box-shadow:0 0 0 3px var(--accent) inset}
 .pitch svg.lines,.pitch svg.draw{position:absolute;inset:0;width:100%;height:100%}
@@ -196,17 +240,17 @@ nav.tabs .desk-only{display:none}
 .pitch .side-lbl{position:absolute;left:10px;font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:.08em;color:rgba(255,255,255,.55);pointer-events:none}
 /* fichas */
 .token{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;z-index:4}
-.token .disc{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:18px;border:2px solid rgba(255,255,255,.92);box-shadow:0 4px 10px rgba(0,0,0,.35);transition:transform .15s var(--ease-out),box-shadow .15s ease}
+.token .disc{width:var(--tok,38px);height:var(--tok,38px);border-radius:50%;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:calc(var(--tok,38px)*.47);border:2px solid rgba(255,255,255,.92);box-shadow:0 4px 10px rgba(0,0,0,.35);transition:transform .15s var(--ease-out),box-shadow .15s ease,width .15s var(--ease-out),height .15s var(--ease-out)}
 .token.own .disc{background:#fff;color:var(--navy-900)}
 .token.rival .disc{background:var(--del);color:#fff}
-.token .name{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.02em;color:#fff;background:rgba(11,31,58,.78);padding:2px 7px;border-radius:6px;white-space:nowrap;max-width:104px;overflow:hidden;text-overflow:ellipsis}
+.token .name{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:calc(var(--tok,38px)*.33);letter-spacing:.02em;color:#fff;background:rgba(11,31,58,.78);padding:1px 7px;border-radius:6px;white-space:nowrap;max-width:calc(var(--tok,38px)*3);overflow:hidden;text-overflow:ellipsis}
 .token.lift{z-index:9}.token.lift .disc{transform:scale(1.14);box-shadow:0 14px 26px rgba(0,0,0,.5)}
 .ghost{position:fixed;z-index:95;pointer-events:none}
 .hint{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;text-align:center;padding:20px;z-index:1}
 .hint span{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:600;color:#fff;background:rgba(11,31,58,.6);padding:10px 16px;border-radius:12px}
 .bench h3 .cnt{margin-left:auto;font-family:"Barlow",sans-serif;font-weight:500;font-size:13px;color:var(--ink-3)}
 .bench-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.bchip{display:inline-flex;align-items:center;gap:8px;padding:5px 10px 5px 5px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line-soft);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;font-weight:500;font-size:14px}
+.bchip{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line-soft);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
 .bchip .avatar{width:28px;height:28px;font-size:14px;background:#fff;color:var(--navy-900);border:1px solid var(--line)}
 .bchip .avatar::after{border-color:var(--panel-2)}
 .bchip.placed{border-color:var(--navy-500);background:var(--panel)}
@@ -453,12 +497,29 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
           <button data-t="erase" title="Borrar un trazo"><i class="ti ti-eraser"></i></button>
         </div>
         <div class="tb" id="colBar" style="padding:5px 6px"><button class="col on" data-c="#FFFFFF" style="background:#fff"></button><button class="col" data-c="#FFC940" style="background:#FFC940"></button><button class="col" data-c="#EA4C57" style="background:#EA4C57"></button><button class="col" data-c="#3B8BEB" style="background:#3B8BEB"></button></div>
+        <div class="tb size-tb">
+          <i class="ti ti-circles" title="Tamaño de las fichas"></i>
+          <input id="tokSize" type="range" min="26" max="62" step="2" aria-label="Tamaño de las fichas">
+        </div>
+        <div class="tb rival-tb">
+          <button id="rivOne" title="Añade una ficha del rival y la arrastras tú"><i class="ti ti-user-plus"></i><span>Jugador rival</span></button>
+          <button id="rivForm" title="Coloca la formación de un rival guardado"><i class="ti ti-layout-grid"></i><span>Formación rival</span></button>
+        </div>
       </div>
-      <div class="boards" id="boards"></div>
-      <div class="card bench" style="margin-top:12px">
-        <h3><i class="ti ti-shirt-sport"></i>Jugadores<span class="cnt" id="benchCnt"></span></h3>
-        <div class="bench-list" id="benchList"></div>
-        <p class="faint" style="font-size:13px;margin-top:10px">Arrastra a cualquier campo. Un mismo jugador puede estar en varios a la vez. Toca una ficha del campo para quitarla o abrir su ficha.</p>
+      <div class="pz-layout" id="pzLayout">
+        <div class="boards" id="boards"></div>
+        <aside class="pz-side card" id="pzSide">
+          <div class="side-h">
+            <h3><i class="ti ti-shirt-sport"></i>Jugadores</h3>
+            <span class="cnt" id="benchCnt"></span>
+            <button id="sideSwap" title="Cambiar de lado"><i class="ti ti-arrows-left-right"></i></button>
+            <button id="sideFold" title="Plegar"><i class="ti ti-chevron-up"></i></button>
+          </div>
+          <div class="side-body">
+            <div class="bench-list" id="benchList"></div>
+            <p class="faint side-tip">Arrastra a cualquier campo; un jugador puede estar en varios a la vez.</p>
+          </div>
+        </aside>
       </div>
     </section>
 
@@ -778,10 +839,11 @@ function renderPizarra(){
     return `<div class="board${b.id===activeBoard?' active':''}${boards.length>1?'':' solo'}" data-b="${b.id}">
       <div class="board-h">
         <button class="bname" data-a="name" title="Cambiar nombre">${esc(b.nombre)}</button>
-        <span class="bcount ${over?'over':''}" title="Fichas en el campo">${n}/${c.fmt}</span>
+        <span class="bcount ${over?'over':''}" title="Fichas en el campo">${n}/${c.fmt}</span>${b.rival.length?`<span class="bcount rival" title="Fichas del rival en el campo">${b.rival.length}<i class="ti ti-shield-half" style="font-size:13px;margin-left:3px;vertical-align:-1px"></i></span>`:''}
         <select class="bform" aria-label="Sistema"><option value="">Sistema…</option>${fmts.map(f=>`<option${b.sistema===f?' selected':''}>${f}</option>`).join('')}</select>
+        <button data-a="add" title="Añadir otro campo"><i class="ti ti-plus"></i></button>
+        <button data-a="dup" title="Duplicar este campo"><i class="ti ti-copy"></i></button>
         <button data-a="img" title="Guardar imagen"><i class="ti ti-camera"></i></button>
-        <button data-a="dup" title="Duplicar campo"><i class="ti ti-copy"></i></button>
         <button data-a="clear" title="Vaciar campo"><i class="ti ti-eraser-off"></i></button>
         ${boards.length>1?`<button data-a="del" class="danger" title="Borrar campo"><i class="ti ti-trash"></i></button>`:''}
       </div>
@@ -793,6 +855,7 @@ function renderPizarra(){
           <div class="hint"><span>Arrastra jugadores aquí<br>o elige un sistema</span></div>
         </div>
       </div></div>`; }).join('');
+  applySide();
   boards.forEach(b=>paintBoard(b.id));
   $$('#boards .board').forEach(el=>{
     const id=el.dataset.b;
@@ -809,10 +872,26 @@ function boardAction(id,a){
   if(a==='name'){ const v=prompt('Nombre de este campo',b.nombre); if(v!==null&&v.trim()) b.nombre=v.trim(); }
   if(a==='clear'){ b.tokens={}; b.sistema=null; b.rival=[]; b.rivalName=null; b.strokes=[]; }
   if(a==='dup'){ const copy=JSON.parse(JSON.stringify(b)); copy.id=uid(); copy.nombre=b.nombre+' (copia)'; boards.splice(boards.indexOf(b)+1,0,copy); activeBoard=copy.id; dropAnim=copy.id; }
+  if(a==='add'){ const nb=newBoard('Campo '+(boards.length+1)); boards.splice(boards.indexOf(b)+1,0,nb); activeBoard=nb.id; }
   if(a==='del'){ if(!confirm(`¿Borrar "${b.nombre}"?`)) return; boards=boards.filter(x=>x.id!==id); if(activeBoard===id) activeBoard=boards[0].id; }
   if(a==='img'){ snapshot(id); return; }
   saveBoards(); renderPizarra();
 }
+const TOK_KEY='vestuario-tok';
+function applyTok(v){ const px=clamp(parseInt(v,10)||38,26,62);
+  document.documentElement.style.setProperty('--tok',px+'px');
+  const el=$('#tokSize'); if(el&&+el.value!==px) el.value=px; return px; }
+function initTok(){ let v=38; try{ v=parseInt(localStorage.getItem(TOK_KEY),10)||38; }catch(e){} applyTok(v); }
+$('#tokSize').addEventListener('input',e=>{ const px=applyTok(e.target.value); try{ localStorage.setItem(TOK_KEY,px); }catch(err){} });
+initTok();
+
+const SIDE_KEY='vestuario-side';
+function sideState(){ try{ return JSON.parse(localStorage.getItem(SIDE_KEY)||'{}'); }catch(e){ return {}; } }
+function applySide(){ const st=sideState(); $('#pzLayout').classList.toggle('left',!!st.left); $('#pzSide').classList.toggle('fold',!!st.fold); }
+function setSide(patch){ const st=Object.assign(sideState(),patch); try{ localStorage.setItem(SIDE_KEY,JSON.stringify(st)); }catch(e){} applySide(); }
+$('#sideSwap').onclick=()=>setSide({left:!$('#pzLayout').classList.contains('left')});
+$('#sideFold').onclick=()=>setSide({fold:!$('#pzSide').classList.contains('fold')});
+applySide();
 $('#addBoard').onclick=()=>{ loadBoards(); const b=newBoard(); boards.push(b); activeBoard=b.id; saveBoards(); renderPizarra(); say('Campo añadido'); };
 
 function paintBoard(id){
@@ -829,7 +908,7 @@ function paintBoard(id){
 function renderBench(){
   const c=cfg(), ps=players();
   const placed=id=>boards.filter(b=>b.tokens[id]).length;
-  $('#benchCnt').textContent=ps.length?`${ps.length} en plantilla`:'';
+  $('#benchCnt').textContent=ps.length?`${ps.length}`:''; $('#benchCnt').title='Jugadores en plantilla';
   $('#benchList').innerHTML=ps.length?ps.map(p=>{ const n=placed(p._id);
     return `<div class="bchip${n?' placed':''}" data-id="${p._id}"><span class="avatar" style="--pc:${lineVar(p)}">${dorsal(p)}</span>${esc(short(p))}${n>1?`<span class="tag">×${n}</span>`:''}</div>`; }).join('')
     :`<span class="faint" style="font-size:14px">Añade jugadores en Plantilla.</span>`;
@@ -932,11 +1011,37 @@ function applyFormation(bid,key){
   b.sistema=key; activeBoard=bid; dropAnim=bid; saveBoards(); renderPizarra();
   say(missing?`${key} en ${b.nombre} · faltan ${missing} jugador${missing>1?'es':''} de esas líneas`:`${key} en ${b.nombre}`);
 }
-function placeRival(r){
-  loadBoards(); const b=B(activeBoard)||boards[0], f=FORM[cfg().fmt][r.sistema], toks=[], js=r.jugadores||[];
-  if(f){ const pool={}; ORDER.forEach(k=>pool[k]=js.filter(p=>p.pos===k)); ORDER.forEach(L=>f[L].forEach(s=>{ const p=pool[L].shift(); toks.push({id:uid(),num:p?p.dorsal:null,label:p?(p.nombre||''):'',x:100-s[0],y:100-s[1]}); })); }
-  else { if(!js.length){ say('Este rival no tiene sistema ni jugadores anotados'); return; } js.slice(0,cfg().fmt).forEach((p,i)=>toks.push({id:uid(),num:p.dorsal,label:p.nombre||'',x:20+(i%5)*15,y:14+Math.floor(i/5)*10})); }
-  b.rival=toks; b.rivalName=r.nombre; dropAnim=b.id; saveBoards(); renderPizarra(); say(`${r.nombre} en ${b.nombre}`);
+function rivalSpot(n){ return {x:18+(n%5)*16,y:12+Math.floor(n/5)*11}; }
+function addRivalToken(){
+  loadBoards(); const b=B(activeBoard)||boards[0];
+  b.rival.push({id:uid(),num:b.rival.length+1,label:'',...rivalSpot(b.rival.length)});
+  saveBoards(); renderPizarra(); say(`Ficha rival en ${b.nombre}`);
+}
+function rivalFormSheet(){
+  loadBoards(); const b=B(activeBoard)||boards[0], c=cfg(), rs=T().rivales, fmts=Object.keys(FORM[c.fmt]);
+  openSheet('Formación del rival',`
+    <p class="muted">Se coloca en la mitad de arriba de <b>${esc(b.nombre)}</b>. Después puedes arrastrar cada ficha donde quieras.</p>
+    <div class="sec"><h3><i class="ti ti-shield-half"></i>Rival</h3>
+      <select id="rfRival">${rs.length?`<option value="">Sin rival guardado · dorsales 1 a ${c.fmt}</option>`+rs.map(r=>`<option value="${r._id}">${esc(r.nombre)}${r.sistema?' · '+esc(r.sistema):''}</option>`).join(''):`<option value="">No tienes rivales guardados · se colocan los dorsales 1 a ${c.fmt}</option>`}</select>
+      <p class="faint" style="font-size:13px;margin-top:8px">${rs.length?'Si eliges uno guardado, salen sus dorsales y las notas que tengas apuntadas de cada jugador.':'Puedes guardar rivales en la pestaña Rivales para reutilizarlos con sus dorsales y notas.'}</p></div>
+    <div class="sec"><h3><i class="ti ti-layout-grid"></i>Sistema</h3><select id="rfForm">${fmts.map(f=>`<option>${f}</option>`).join('')}</select></div>`,
+    `${b.rival.length?'<button class="btn danger" id="rfClear">Quitar los rivales</button>':''}<span style="flex:1"></span><button class="btn accent" id="rfOk"><i class="ti ti-check"></i>Colocar</button>`);
+  $('#rfRival').onchange=()=>{ const r=rs.find(x=>x._id===$('#rfRival').value); if(r&&r.sistema&&fmts.includes(r.sistema)) $('#rfForm').value=r.sistema; };
+  if(b.rival.length) $('#rfClear').onclick=()=>{ const x=B(b.id); x.rival=[]; x.rivalName=null; saveBoards(); closeSheet(); renderPizarra(); };
+  $('#rfOk').onclick=()=>{ const r=rs.find(x=>x._id===$('#rfRival').value);
+    placeRival(r?{...r,sistema:$('#rfForm').value}:{nombre:null,sistema:$('#rfForm').value,jugadores:[]},b.id); closeSheet(); };
+}
+$('#rivOne').onclick=addRivalToken;
+$('#rivForm').onclick=rivalFormSheet;
+function placeRival(r,bid){
+  loadBoards(); const b=B(bid)||B(activeBoard)||boards[0], f=FORM[cfg().fmt][r.sistema], toks=[], js=r.jugadores||[];
+  if(f){ const pool={}; ORDER.forEach(k=>pool[k]=js.filter(p=>p.pos===k)); let n=0;
+    ORDER.forEach(L=>f[L].forEach(s=>{ const p=pool[L].shift(); n++;
+      toks.push({id:uid(),num:(p&&p.dorsal!=null)?p.dorsal:n,label:p?[p.nombre,p.nota].filter(Boolean).join(' · '):'',x:100-s[0],y:100-s[1]}); })); }
+  else { if(!js.length){ say('Elige un sistema para colocarlos'); return; }
+    js.slice(0,cfg().fmt).forEach((p,i)=>toks.push({id:uid(),num:p.dorsal??i+1,label:[p.nombre,p.nota].filter(Boolean).join(' · '),...rivalSpot(i)})); }
+  b.rival=toks; b.rivalName=r.nombre||null; activeBoard=b.id; dropAnim=b.id; saveBoards(); renderPizarra();
+  say(r.nombre?`${r.nombre} en ${b.nombre}`:`Rival colocado en ${b.nombre}`);
 }
 /* ── dibujo ── */
 let tool='move', color='#FFFFFF';
@@ -979,9 +1084,11 @@ async function snapshot(bid){
   const P=(px,py)=>[px/100*W,py/100*H];
   b.strokes.forEach(s=>{ x.strokeStyle=s.c; x.lineWidth=5; x.lineCap='round'; x.lineJoin='round'; x.beginPath(); s.pts.forEach((p,i)=>{ const [a,bb]=P(...p); i?x.lineTo(a,bb):x.moveTo(a,bb); }); x.stroke();
     if(s.t==='arrow'){ const [a1,b1]=P(...s.pts[0]),[a2,b2]=P(...s.pts[1]); const ang=Math.atan2(b2-b1,a2-a1); x.fillStyle=s.c; x.beginPath(); x.moveTo(a2,b2); x.lineTo(a2-16*Math.cos(ang-.5),b2-16*Math.sin(ang-.5)); x.lineTo(a2-16*Math.cos(ang+.5),b2-16*Math.sin(ang+.5)); x.closePath(); x.fill(); } });
-  const tok=(px,py,num,label,bg,fg)=>{ const [a,bb]=P(px,py); x.beginPath(); x.arc(a,bb,26,0,7); x.fillStyle=bg; x.fill(); x.lineWidth=3; x.strokeStyle='rgba(255,255,255,.92)'; x.stroke();
-    x.fillStyle=fg; x.font='700 26px "Barlow Condensed",sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(String(num??'·'),a,bb+1);
-    if(label){ x.font='600 18px "Barlow Condensed",sans-serif'; const tw=x.measureText(label).width+14; x.fillStyle='rgba(11,31,58,.78)'; x.fillRect(a-tw/2,bb+32,tw,24); x.fillStyle='#fff'; x.fillText(label,a,bb+44); } };
+  const k=(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--tok'),10)||38)/38;
+  const R=Math.round(26*k), F=Math.round(26*k), FN=Math.round(18*k);
+  const tok=(px,py,num,label,bg,fg)=>{ const [a,bb]=P(px,py); x.beginPath(); x.arc(a,bb,R,0,7); x.fillStyle=bg; x.fill(); x.lineWidth=3; x.strokeStyle='rgba(255,255,255,.92)'; x.stroke();
+    x.fillStyle=fg; x.font=`700 ${F}px "Barlow Condensed",sans-serif`; x.textAlign='center'; x.textBaseline='middle'; x.fillText(String(num??'·'),a,bb+1);
+    if(label){ x.font=`600 ${FN}px "Barlow Condensed",sans-serif`; const tw=x.measureText(label).width+14; x.fillStyle='rgba(11,31,58,.78)'; x.fillRect(a-tw/2,bb+R+6,tw,FN+6); x.fillStyle='#fff'; x.fillText(label,a,bb+R+6+(FN+6)/2); } };
   players().filter(p=>b.tokens[p._id]).forEach(p=>tok(b.tokens[p._id].x,b.tokens[p._id].y,dorsal(p),short(p),'#FFFFFF','#0B1F3A'));
   b.rival.forEach(r=>tok(r.x,r.y,r.num,r.label,'#EA4C57','#fff'));
   x.fillStyle='#EAF0F8'; x.font='700 28px "Barlow Condensed",sans-serif'; x.textAlign='left'; x.textBaseline='middle';
@@ -1024,10 +1131,9 @@ function renderRoster(){
     g.innerHTML=`<div class="group-title"><span class="dot pos-${L}"></span>${LINES[L]}<span class="cnt">${list.length}</span></div>`;
     list.forEach(p=>{
       const b=document.createElement('button'); b.className='prow';
-      const yl=yearLabel(p);
       b.innerHTML=`<span class="avatar" style="--pc:${lineVar(p)}">${dorsal(p)}</span>
         <span class="who"><b>${esc(short(p))}${p.apodo?` <span class="faint" style="font-weight:400;font-size:13px">${esc(p.nombre)}</span>`:''}</b>
-        <small><span class="tag">${esc(p.pos)}</span>${p.pos2?`<span class="tag">${esc(p.pos2)}</span>`:''}${p.pie?`<span class="tag">${p.pie==='Ambas'?'Ambidiestro':'Pie '+p.pie.toLowerCase()}</span>`:''}${yl?`<span class="tag navy">${yl}</span>`:''}</small></span>
+        <small><span class="tag">${esc(p.pos)}</span>${p.pos2?`<span class="tag">${esc(p.pos2)}</span>`:''}</small></span>
         <i class="ti ti-chevron-right"></i>`;
       b.onclick=()=>openFicha(p._id); g.appendChild(b);
     });
