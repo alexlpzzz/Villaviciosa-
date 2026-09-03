@@ -217,7 +217,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   .pz-side .bchip{justify-content:flex-start;width:100%;min-width:0}
   .pz-side .bchip span:not(.avatar):not(.tag){overflow:hidden;text-overflow:ellipsis}
 }
+.only-mobile{display:none}
 @media (max-width:899px){
+  .only-mobile{display:grid}
+  .pz-side .bchip{touch-action:pan-x}
   .pz-side{order:-1;position:sticky;top:calc(var(--top-h) + 4px);z-index:13;box-shadow:var(--shadow)}
   .pz-side .bench-list{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
   .pz-side .bench-list::-webkit-scrollbar{display:none}
@@ -525,6 +528,8 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
           <div class="side-h">
             <h3><i class="ti ti-shirt-sport"></i>Jugadores</h3>
             <span class="cnt" id="benchCnt"></span>
+            <button id="benchPrev" class="only-mobile" title="Ver anteriores"><i class="ti ti-chevron-left"></i></button>
+            <button id="benchNext" class="only-mobile" title="Ver siguientes"><i class="ti ti-chevron-right"></i></button>
             <button id="sideSwap" title="Cambiar de lado"><i class="ti ti-arrows-left-right"></i></button>
             <button id="sideFold" title="Plegar"><i class="ti ti-chevron-up"></i></button>
           </div>
@@ -910,6 +915,9 @@ $('#sideSwap').onclick=()=>setSide({left:!$('#pzLayout').classList.contains('lef
 $('#sideFold').onclick=()=>setSide({fold:!$('#pzSide').classList.contains('fold')});
 applySide();
 $$('#scrollPad button').forEach(b=>b.onclick=()=>window.scrollBy({top:(b.dataset.s==='up'?-1:1)*innerHeight*0.72,behavior:'smooth'}));
+const benchScroll=d=>$('#benchList').scrollBy({left:d*$('#benchList').clientWidth*0.8,behavior:'smooth'});
+$('#benchPrev').onclick=()=>benchScroll(-1);
+$('#benchNext').onclick=()=>benchScroll(1);
 $('#addBoard').onclick=()=>{ loadBoards(); const b=newBoard(); boards.push(b); activeBoard=b.id; saveBoards(); renderPizarra(); say('Campo añadido'); };
 
 function paintBoard(id){
@@ -931,7 +939,10 @@ function renderBench(){
   $('#benchList').innerHTML=ps.length?ps.map(p=>{ const n=placed(p._id);
     return `<div class="bchip${n?' placed':''}" data-id="${p._id}"><span class="avatar" style="--pc:${lineVar(p)}">${dorsal(p)}</span>${esc(short(p))}${n>1?`<span class="tag">×${n}</span>`:''}</div>`; }).join('')
     :`<span class="faint" style="font-size:14px">Añade jugadores en Plantilla.</span>`;
-  $$('#benchList .bchip').forEach(el=>el.addEventListener('pointerdown',e=>startDrag(e,{kind:'own',id:el.dataset.id,board:null})));
+  $$('#benchList .bchip').forEach(el=>{
+    el.addEventListener('pointerdown',e=>startDrag(e,{kind:'own',id:el.dataset.id,board:null}));
+    el.addEventListener('click',()=>{ if(isMobile()) tapToPlace(el.dataset.id); });
+  });
 }
 function makeToken(bid,o){
   const el=document.createElement('div'); el.className=`token ${o.kind}`; el.dataset.id=o.id; el.style.left=o.x+'%'; el.style.top=o.y+'%';
@@ -952,6 +963,7 @@ function pitchAt(e){
 }
 function startDrag(e,ref){
   if(drag) return;
+  if(isMobile()&&!ref.board) return;   // en móvil la lista se desliza y el jugador se coloca al tocarlo
   if(e.button!==undefined&&e.button!==0) return;
   if(tool!=='move') return;
   e.preventDefault(); e.stopPropagation();
