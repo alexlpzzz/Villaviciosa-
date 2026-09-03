@@ -22,7 +22,7 @@
   --shadow:0 8px 24px rgba(11,31,58,.10),0 2px 6px rgba(11,31,58,.05);
   --shadow-lg:0 18px 48px rgba(11,31,58,.22);
   --ease-out:cubic-bezier(.23,1,.32,1); --ease-drawer:cubic-bezier(.32,.72,0,1);
-  --safe-b:env(safe-area-inset-bottom,0px); --nav-h:60px;
+  --safe-b:env(safe-area-inset-bottom,0px); --nav-h:60px; --top-h:58px;
   --r:12px; --r-lg:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -69,23 +69,46 @@ label.f{display:block;font-size:13px;color:var(--ink-2);margin-bottom:5px;font-w
 .seg button.on{background:var(--accent);color:var(--accent-ink)}
 .seg button small{font-family:"Barlow",sans-serif;font-weight:500;font-size:11px;opacity:.8;margin-left:4px}
 main{padding:2px 16px calc(var(--nav-h) + var(--safe-b) + 18px);max-width:1180px;width:100%;margin:0 auto;min-width:0}
-.screen{display:none}.screen.on{display:block;animation:in .22s var(--ease-out)}
-@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.screen{display:none}.screen.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes popIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}60%{transform:translate(-50%,-50%) scale(1.08)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes grow{from{width:0}}
+@keyframes draw{from{stroke-dashoffset:1400}}
+@keyframes barUp{from{transform:scaleY(0)}}
+.screen.anim>*{animation:rise .42s var(--ease-out) both}
+.screen.anim>*:nth-child(2){animation-delay:.05s}
+.screen.anim>*:nth-child(3){animation-delay:.1s}
+.screen.anim>*:nth-child(4){animation-delay:.14s}
+.screen.anim>*:nth-child(n+5){animation-delay:.18s}
+.screen.anim .stat,.screen.anim .list>*,.screen.anim .group{animation:rise .42s var(--ease-out) both}
+.screen.anim .stat:nth-child(2),.screen.anim .list>*:nth-child(2){animation-delay:.04s}
+.screen.anim .stat:nth-child(3),.screen.anim .list>*:nth-child(3){animation-delay:.08s}
+.screen.anim .stat:nth-child(4),.screen.anim .list>*:nth-child(4){animation-delay:.12s}
+.screen.anim .stat:nth-child(5),.screen.anim .list>*:nth-child(5){animation-delay:.16s}
+.screen.anim .stat:nth-child(n+6),.screen.anim .list>*:nth-child(n+6){animation-delay:.2s}
+.bar .fill{animation:grow .7s var(--ease-out)}
+.gchart .ln{stroke-dasharray:1400;animation:draw 1.2s var(--ease-out) both}
+.gchart rect{transform-box:fill-box;transform-origin:bottom;animation:barUp .55s var(--ease-out) both}
+.gchart .pt{animation:rise .4s var(--ease-out) both;animation-delay:.35s}
+.pitch.drop .token{animation:popIn .34s var(--ease-out) both}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);background:var(--panel);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);box-shadow:0 -4px 20px rgba(11,31,58,.06)}
 nav.tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-3);font-size:11px;font-weight:500;transition:color .15s ease;position:relative}
 nav.tabs button .ti{font-size:22px}
 nav.tabs button.on{color:var(--navy-700)}
-nav.tabs button.on::before{content:"";position:absolute;top:0;left:20%;right:20%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+nav.tabs button.on::before{content:"";position:absolute;top:0;left:20%;right:20%;height:3px;border-radius:0 0 3px 3px;background:var(--accent);animation:tabIn .3s var(--ease-out)}
+@keyframes tabIn{from{transform:scaleX(.2);opacity:0}}
 nav.tabs button:active{transform:none}
 .more-menu{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + var(--safe-b));z-index:29;background:var(--panel);border-top:1px solid var(--line);padding:8px 12px 12px;display:none;box-shadow:0 -10px 30px rgba(11,31,58,.12);animation:up .22s var(--ease-drawer)}
-.more-menu.on{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.more-menu.on{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .more-menu button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border-radius:12px;background:var(--panel-2);font-weight:600;font-size:13px;color:var(--ink-2)}
 .more-menu button .ti{font-size:22px;color:var(--navy-600)}
 .more-menu button.on{background:var(--navy-900);color:#fff}.more-menu button.on .ti{color:var(--accent)}
+#s-pizarra .head{position:sticky;top:calc(var(--top-h) - 1px);z-index:15;margin:0 -16px 8px;padding:12px 16px 10px;background:linear-gradient(to bottom,var(--bg) 78%,rgba(243,245,249,0));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#s-pizarra .chipbar{position:sticky;top:calc(var(--top-h) + 58px);z-index:14;background:var(--bg);margin:0 -16px;padding:2px 16px 8px}
 @media (min-width:960px){
   .shell.on{grid-template-columns:210px 1fr}
   .top{grid-column:1/-1}
-  nav.tabs{position:sticky;top:64px;align-self:start;height:auto;display:flex;flex-direction:column;gap:2px;padding:14px 10px;border:0;background:transparent;box-shadow:none;margin-left:6px}
+  nav.tabs{position:sticky;top:calc(var(--top-h) + 8px);align-self:start;height:auto;display:flex;flex-direction:column;gap:2px;padding:14px 10px;border:0;background:transparent;box-shadow:none;margin-left:6px}
   nav.tabs button{flex-direction:row;justify-content:flex-start;gap:12px;padding:10px 12px;border-radius:10px;font-size:15px;color:var(--ink-2)}
   nav.tabs button.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
   nav.tabs button.on::before{display:none}
@@ -158,6 +181,7 @@ nav.tabs .desk-only{display:none}
 .pitch svg.lines *{fill:none;stroke:var(--pitch-line);stroke-width:.35;vector-effect:non-scaling-stroke}
 .pitch svg.lines .spot{fill:var(--pitch-line);stroke:none}
 .pitch .side-lbl{position:absolute;left:10px;font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:.08em;color:rgba(255,255,255,.55);pointer-events:none}
+/* fichas */
 .token{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;z-index:4}
 .token .disc{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:18px;border:2px solid rgba(255,255,255,.92);box-shadow:0 4px 10px rgba(0,0,0,.35);transition:transform .15s var(--ease-out),box-shadow .15s ease}
 .token.own .disc{background:#fff;color:var(--navy-900)}
@@ -208,7 +232,8 @@ nav.tabs .desk-only{display:none}
 /* ── Listas ── */
 .list{display:flex;flex-direction:column;gap:8px}
 .item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line-soft);border-radius:14px;padding:12px 14px;width:100%;text-align:left;transition:border-color .15s ease,box-shadow .15s ease;box-shadow:var(--shadow-sm)}
-.item:hover{border-color:var(--line);box-shadow:var(--shadow)}
+.item{transition:border-color .15s ease,box-shadow .15s ease,transform .15s var(--ease-out)}
+.item:hover{border-color:var(--line);box-shadow:var(--shadow);transform:translateY(-2px)}
 .item:active{transform:none}
 .item .t{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:19px}
 .item .s{color:var(--ink-2);font-size:13px;margin-top:2px}
@@ -328,7 +353,9 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
 .sess.cancel summary .d{opacity:.5;text-decoration:line-through}
 .sess-b{padding:4px 12px 12px;border-top:1px solid var(--line-soft)}
 .att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:8px}
-.att-p{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line-soft);text-align:left;font-weight:500;font-size:14px}
+.att-p{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line-soft);text-align:left;font-weight:500;font-size:14px;transition:border-color .15s ease,background .15s ease}
+.att-p i{transition:background .25s var(--ease-out)}
+.att-p:active{transform:scale(.97)}
 .att-p i{width:12px;height:12px;border-radius:4px;flex-shrink:0}
 .att-p .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .att-p small{margin-left:auto;font-family:"Barlow Condensed",sans-serif;font-weight:700;color:var(--ink-3);font-size:13px}
@@ -393,12 +420,10 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
     <button data-screen="mas" id="masBtn"><i class="ti ti-dots"></i>Más</button>
     <button data-screen="rivales" class="desk-only"><i class="ti ti-shield-half"></i>Rivales</button>
     <button data-screen="objetivos" class="desk-only"><i class="ti ti-target"></i>Objetivos</button>
-    <button data-screen="chat" class="desk-only"><i class="ti ti-sparkles"></i>IA</button>
   </nav>
   <div class="more-menu" id="moreMenu">
     <button data-screen="rivales"><i class="ti ti-shield-half"></i>Rivales</button>
     <button data-screen="objetivos"><i class="ti ti-target"></i>Objetivos</button>
-    <button data-screen="chat"><i class="ti ti-sparkles"></i>Chat IA</button>
   </div>
 
   <main>
@@ -477,7 +502,7 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
     <section class="screen" id="s-stats"><div id="statsBody"></div></section>
 
     <section class="screen" id="s-asistencia">
-      <div class="head"><div><h1>Asistencia</h1><p id="att-sub"></p></div><button class="btn ghost" id="attExtra"><i class="ti ti-calendar-plus"></i>Sesión extra</button></div>
+      <div class="head"><div><h1>Asistencia</h1><p id="att-sub"></p></div></div>
       <div class="card">
         <div class="att-legend"><span><i class="st-p"></i>Presente (por defecto)</span><span><i class="st-a"></i>Ausente</span><span><i class="st-j"></i>Recuperó con otro equipo</span><span><i class="st-e"></i>Justificado</span></div>
         <p class="faint" style="font-size:13px;margin-top:8px">Las sesiones aparecen solas según el calendario. Toca a un jugador para cambiar su estado; se guarda al momento para los dos entrenadores.</p>
@@ -502,17 +527,9 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
         </div>
       </div>
       <div id="objList" style="margin-top:12px"></div>
-      <div id="objAI" style="margin-top:12px"></div>
     </section>
 
-    <section class="screen" id="s-chat">
-      <div class="head"><div><h1>Chat IA</h1><p>Pregunta sobre tu equipo con todos los datos de la temporada.</p></div></div>
-      <div class="card">
-        <div class="chat-sugs" id="chatSugs"></div>
-        <div class="chat" id="chatWrap"></div>
-        <div class="chat-in"><input id="chatIn" placeholder="Pregunta algo sobre tu equipo…"><button class="btn ai" id="chatSend"><i class="ti ti-send"></i></button></div>
-      </div>
-    </section>
+</section>
   </main>
 </div>
 
@@ -525,16 +542,6 @@ import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, deleteDoc, a
 const firebaseConfig={apiKey:"AIzaSyBH9-upujdVbbMzJ4O0JJqZotS-rAKsI0s",authDomain:"equipos-presialex.firebaseapp.com",projectId:"equipos-presialex",storageBucket:"equipos-presialex.firebasestorage.app",messagingSenderId:"780089838879",appId:"1:780089838879:web:cace532a1b78747afcb42a"};
 const db=getFirestore(initializeApp(firebaseConfig));
 
-// ── GEMINI ── pon aquí tu key de aistudio.google.com
-const GEMINI_KEY='PON_AQUI_TU_KEY_DE_GOOGLE_AI_STUDIO';
-const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-async function callAI(prompt){
-  try{
-    const r=await fetch(`${GEMINI_URL}?key=${GEMINI_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:800}})});
-    const d=await r.json(); if(d.error) return 'Error: '+d.error.message;
-    return d.candidates?.[0]?.content?.parts?.[0]?.text||'Sin respuesta.';
-  }catch(e){ return 'No se pudo conectar con la IA. Revisa la key de Gemini.'; }
-}
 
 /* ═══════════════ Constantes ═══════════════ */
 const TEAMS={
@@ -573,7 +580,6 @@ const FORM={
      '2-2-2':{POR:[[50,91]],DEF:[[30,76],[70,76]],MED:[[30,52],[70,52]],DEL:[[30,28],[70,28]]},
      '1-3-2':{POR:[[50,91]],DEF:[[50,76]],MED:[[18,54,'Extremo'],[50,58],[82,54,'Extremo']],DEL:[[32,28],[68,28]]}},
 };
-const CHAT_SUGS=['¿Quién tiene mejor progresión?','¿Quién juega menos minutos?','¿Cómo nos marcan más goles?','¿Quién falta más a entrenamientos?','Dame info del último rival','¿Quién tiene mejor relación goles/minutos?'];
 
 /* ═══════════════ Estado ═══════════════ */
 const emptyTeam=()=>({players:[],matches:[],objetivos:[],rivales:[],alineaciones:[],attendance:{},fichas:{},matchNotes:{}});
@@ -607,7 +613,8 @@ async function write(fn,msg){ sync('load','Guardando…'); try{ const r=await fn
 async function init(){
   try{ await getDoc(doc(db,'teams','alev')); }
   catch(e){ $('#loading').innerHTML='<i class="ti ti-wifi-off" style="font-size:40px;color:#F87171"></i><b>Sin conexión</b><span style="color:rgba(255,255,255,.6)">Vuelve a intentarlo cuando tengas red.</span>'; return; }
-  subscribe(); $('#loading').style.display='none'; $('#shell').classList.add('on'); sync('ok','Sincronizado'); go(screen);
+  subscribe(); $('#loading').style.display='none'; $('#shell').classList.add('on'); sync('ok','Sincronizado'); measureTop(); go(screen);
+  setTimeout(weeklyBackup,6000);
 }
 function subscribe(){
   unsubs.forEach(u=>u()); unsubs=[];
@@ -622,21 +629,25 @@ function subscribe(){
 }
 
 /* ═══════════════ Navegación ═══════════════ */
-const MAS=['rivales','objetivos','chat'];
+const MAS=['rivales','objetivos'];
 function go(s){ screen=s; $('#moreMenu').classList.remove('on');
+  const sec=$('#s-'+s); if(sec){ sec.classList.remove('anim'); void sec.offsetWidth; sec.classList.add('anim'); setTimeout(()=>sec.classList.remove('anim'),900); }
   $$('.screen').forEach(x=>x.classList.toggle('on',x.id==='s-'+s));
   $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.screen===s||(b.dataset.screen==='mas'&&MAS.includes(s))));
   $$('#moreMenu button').forEach(b=>b.classList.toggle('on',b.dataset.screen===s));
   render(); window.scrollTo({top:0}); }
 $$('nav.tabs button, #moreMenu button').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.screen==='mas'){ $('#moreMenu').classList.toggle('on'); return; } go(b.dataset.screen); }));
 document.addEventListener('click',e=>{ if(!e.target.closest('#moreMenu')&&!e.target.closest('#masBtn')) $('#moreMenu').classList.remove('on'); });
-$$('.seg button').forEach(b=>b.addEventListener('click',()=>{ team=b.dataset.team; localStorage.setItem('vestuario-team',team); chatHistory=[]; render(); }));
+$$('.seg button').forEach(b=>b.addEventListener('click',()=>{ team=b.dataset.team; localStorage.setItem('vestuario-team',team); render(); }));
 let pendingRender=false;
+function measureTop(){ const h=$('.top')?.offsetHeight||58; document.documentElement.style.setProperty('--top-h',h+'px'); }
+addEventListener('resize',measureTop); addEventListener('orientationchange',()=>setTimeout(measureTop,120));
 function render(){
   if(drag){ pendingRender=true; return; }
+  measureTop();
   $$('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.team===team));
   renderAlerts();
-  ({pizarra:renderPizarra,plantilla:renderRoster,partidos:renderMatches,stats:renderStats,asistencia:renderAtt,rivales:renderRivals,objetivos:renderObj,chat:renderChat})[screen]?.();
+  ({pizarra:renderPizarra,plantilla:renderRoster,partidos:renderMatches,stats:renderStats,asistencia:renderAtt,rivales:renderRivals,objetivos:renderObj})[screen]?.();
 }
 
 /* ═══════════════ Sheet genérico ═══════════════ */
@@ -648,6 +659,49 @@ function openSheet(title,body,footer){
 function closeSheet(){ dlg.close(); dlg.innerHTML=''; }
 dlg.addEventListener('click',e=>{ if(e.target===dlg) closeSheet(); });
 dlg.addEventListener('cancel',e=>{ e.preventDefault(); closeSheet(); });
+
+/* ═══════════════ Copias de seguridad ═══════════════ */
+const BK_KEEP=8, BK_MAX=700000;
+const bkRef=id=>doc(db,'backups',id);
+async function bkIndex(){ try{ const d=await getDoc(bkRef('index')); return d.exists()?(d.data().list||[]):[]; }catch(e){ return []; } }
+function snapshotJSON(){ return JSON.stringify({fecha:todayISO(),ts:Date.now(),teams:D}); }
+async function makeBackup(tipo){
+  const payload=snapshotJSON();
+  if(payload.length>BK_MAX) throw new Error('demasiados datos para una copia automática');
+  const id='b'+Date.now(), fecha=todayISO();
+  await setDoc(bkRef(id),{fecha,ts:Date.now(),tipo,bytes:payload.length,data:payload});
+  const list=[{id,fecha,ts:Date.now(),tipo,bytes:payload.length},...(await bkIndex())];
+  const keep=list.slice(0,BK_KEEP), drop=list.slice(BK_KEEP);
+  await setDoc(bkRef('index'),{list:keep});
+  for(const d of drop){ try{ await deleteDoc(bkRef(d.id)); }catch(e){} }
+  lastSave=new Date(); return keep;
+}
+async function weeklyBackup(){
+  try{
+    if(localStorage.getItem('vestuario-bk-check')===todayISO()) return;
+    localStorage.setItem('vestuario-bk-check',todayISO());
+    const empty=Object.values(D).every(t=>!t.players.length&&!t.matches.length);
+    if(empty) return;
+    const list=await bkIndex();
+    const last=list[0]?.ts||0;
+    if(Date.now()-last < 7*86400000) return;
+    await makeBackup('auto');
+    console.log('Copia de seguridad semanal creada');
+  }catch(e){ console.warn('No se pudo crear la copia semanal:',e); }
+}
+async function restoreBackup(id){
+  const d=await getDoc(bkRef(id)); if(!d.exists()) throw new Error('copia no encontrada');
+  const snap=JSON.parse(d.data().data);
+  for(const t of Object.keys(TEAMS)){
+    const x=snap.teams?.[t]; if(!x) continue;
+    for(const c of ['players','matches','objetivos','rivales','alineaciones']){
+      for(const row of (x[c]||[])){ const {_id,...rest}=row; await setDoc(doc(db,'teams',t,c,_id),rest); }
+    }
+    for(const [k,name] of [['attendance','attendance'],['fichas','fichas'],['matchNotes','matchNotes']]){
+      if(x[k]) await setDoc(doc(db,'teams',t,name,'data'),x[k]);
+    }
+  }
+}
 
 /* ═══════════════ Datos y copia de seguridad ═══════════════ */
 function openData(){
@@ -662,9 +716,24 @@ function openData(){
     </div>
     <div class="card"><h3><i class="ti ti-database"></i>Qué hay guardado</h3>
       <p style="margin-top:8px"><b>Alevín:</b> ${count('alev')}</p><p><b>Benjamín:</b> ${count('benj')}</p></div>
-    <div class="card"><h3><i class="ti ti-download"></i>Copia de seguridad</h3>
-      <p class="muted" style="margin-top:8px">Descarga un archivo con todos los datos de los dos equipos. Guárdalo de vez en cuando por si acaso.</p>
-      <button class="btn ghost" id="bkDl" style="margin-top:10px"><i class="ti ti-file-download"></i>Descargar copia (JSON)</button></div>`);
+    <div class="card"><h3><i class="ti ti-download"></i>Copias de seguridad</h3>
+      <p class="muted" style="margin-top:8px">La app guarda una copia completa cada semana automáticamente y conserva las ${BK_KEEP} últimas. Si algo se borra por error, puedes volver a una.</p>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn ghost" id="bkNow"><i class="ti ti-cloud-upload"></i>Crear copia ahora</button><button class="btn soft" id="bkDl"><i class="ti ti-file-download"></i>Descargar en el móvil</button></div>
+      <div id="bkList" style="margin-top:12px"><p class="faint" style="font-size:13px">Cargando copias…</p></div></div>`);
+  const paintBk=async()=>{
+    const list=await bkIndex();
+    $('#bkList').innerHTML=list.length?list.map(b=>`<div class="obj"><div style="flex:1;min-width:0"><div class="t">${fmtDate(b.fecha)}</div><div class="n">${b.tipo==='auto'?'automática':'manual'} · ${Math.round((b.bytes||0)/1024)} KB</div></div><button class="btn ghost sm" data-rest="${b.id}">Restaurar</button></div>`).join(''):'<p class="faint" style="font-size:13px">Todavía no hay ninguna copia. Crea la primera con el botón de arriba.</p>';
+    $$('#bkList [data-rest]').forEach(b=>b.onclick=async()=>{
+      if(!confirm('Se volverán a escribir todos los datos tal y como estaban en esa fecha. Lo que hayáis creado después se mantiene. ¿Seguir?')) return;
+      b.disabled=true; b.textContent='Restaurando…';
+      try{ await restoreBackup(b.dataset.rest); say('Copia restaurada'); closeSheet(); }
+      catch(e){ say('No se pudo restaurar: '+(e.message||e)); b.disabled=false; b.textContent='Restaurar'; }
+    });
+  };
+  paintBk();
+  $('#bkNow').onclick=async()=>{ const btn=$('#bkNow'); btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i>Creando…';
+    try{ await makeBackup('manual'); say('Copia creada'); }catch(e){ say('No se pudo crear la copia'); }
+    btn.disabled=false; btn.innerHTML='<i class="ti ti-cloud-upload"></i>Crear copia ahora'; paintBk(); };
   $('#bkDl').onclick=()=>{ const a=document.createElement('a');
     a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify({fecha:todayISO(),teams:D},null,1));
     a.download=`vestuario-copia-${todayISO()}.json`; document.body.appendChild(a); a.click(); a.remove(); say('Copia descargada'); };
@@ -715,11 +784,14 @@ function renderPizarra(){
   $('#rivalCnt').textContent=board.rival.length?`${board.rival.length} en el campo`:'';
   renderPitch();
 }
+let dropAnim=false;
 function renderPitch(){
   const pitch=$('#pitch'); pitch.querySelectorAll('.token,.pop').forEach(x=>x.remove());
   const on=players().filter(p=>board.tokens[p._id]);
   on.forEach(p=>{ const t=board.tokens[p._id]; pitch.appendChild(makeToken({kind:'own',id:p._id,num:dorsal(p),label:short(p),x:t.x,y:t.y})); });
   board.rival.forEach(r=>pitch.appendChild(makeToken({kind:'rival',id:r.id,num:r.num,label:r.label||'',x:r.x,y:r.y})));
+  pitch.classList.toggle('drop',dropAnim);
+  if(dropAnim){ [...pitch.querySelectorAll('.token')].forEach((t,i)=>t.style.animationDelay=(i*0.035).toFixed(2)+'s'); dropAnim=false; setTimeout(()=>pitch.classList.remove('drop'),700); }
   renderStrokes(); syncMode();
   $('#hint').style.display=(on.length||board.rival.length||board.strokes.length)?'none':'grid';
   $('#benchCnt').textContent=`${on.length}/${cfg().fmt} en el campo`;
@@ -797,7 +869,7 @@ function fillSlots(slots,pool){ // pool: array de jugadores de esa línea; prefi
 function applyFormation(key){
   const f=FORM[cfg().fmt][key]; board.tokens={}; let missing=0;
   ORDER.forEach(L=>{ const pool=players().filter(p=>line(p)===L); const placed=fillSlots(f[L],pool); placed.forEach(([p,s])=>board.tokens[p._id]={x:s[0],y:s[1]}); missing+=f[L].length-placed.length; });
-  board.sistema=key; saveBoard(); renderPizarra();
+  board.sistema=key; dropAnim=true; saveBoard(); renderPizarra();
   say(missing?`${key} colocado · faltan ${missing} jugador${missing>1?'es':''} de esas líneas`:`${key} colocado`);
 }
 $('#rivAdd').onclick=()=>{ const n=parseInt($('#rivNum').value,10), k=board.rival.length; board.rival.push({id:uid(),num:isNaN(n)?null:n,label:'',x:20+(k%5)*15,y:14+Math.floor(k/5)*10}); $('#rivNum').value=''; saveBoard(); renderPizarra(); };
@@ -808,7 +880,7 @@ function placeRival(r){
   const f=FORM[cfg().fmt][r.sistema], toks=[], js=r.jugadores||[];
   if(f){ const pool={}; ORDER.forEach(k=>pool[k]=js.filter(p=>p.pos===k)); ORDER.forEach(L=>f[L].forEach(s=>{ const p=pool[L].shift(); toks.push({id:uid(),num:p?p.dorsal:null,label:p?(p.nombre||''):'',x:100-s[0],y:100-s[1]}); })); }
   else { if(!js.length){ say('Este rival no tiene sistema ni jugadores anotados'); return; } js.slice(0,cfg().fmt).forEach((p,i)=>toks.push({id:uid(),num:p.dorsal,label:p.nombre||'',x:20+(i%5)*15,y:14+Math.floor(i/5)*10})); }
-  loadBoard(); board.rival=toks; board.rivalName=r.nombre; saveBoard(); renderPizarra(); say(`${r.nombre} en el campo`);
+  loadBoard(); board.rival=toks; board.rivalName=r.nombre; dropAnim=true; saveBoard(); renderPizarra(); say(`${r.nombre} en el campo`);
 }
 /* dibujo */
 let tool='move', color='#FFFFFF';
@@ -866,7 +938,7 @@ $('#lineupsBtn').onclick=()=>{
     <div class="row" style="margin-top:12px;gap:8px"><input id="alName" placeholder="Nombre, p. ej. Once vs EFMO Boadilla"><button class="btn" id="alSave"><i class="ti ti-device-floppy"></i>Guardar</button></div>
     <div class="sec"><h3><i class="ti ti-bookmarks"></i>Guardadas</h3><div class="list" id="alList">${list.length?list.map(a=>`<div class="item" style="cursor:default"><div style="min-width:0"><div class="t">${esc(a.nombre)}</div><div class="s">${a.sistema||'sin sistema'}${a.rivalName?' · vs '+esc(a.rivalName):''} · ${fmtDate(a.fecha)} · ${Object.keys(a.tokens||{}).length} jugadores</div></div><div class="r row" style="gap:6px"><button class="btn ghost sm" data-load="${a._id}">Cargar</button><button class="btn soft sm" data-del="${a._id}"><i class="ti ti-trash"></i></button></div></div>`).join(''):'<div class="empty"><b>Nada guardado todavía</b>Coloca a tu once y guárdalo con un nombre.</div>'}</div></div>`);
   $('#alSave').onclick=()=>{ const n=$('#alName').value.trim(); if(!n){ say('Ponle un nombre'); return; } write(()=>addDoc(col('alineaciones'),{nombre:n,sistema:board.sistema,rivalName:board.rivalName,tokens:board.tokens,rival:board.rival,strokes:board.strokes,fecha:todayISO(),ts:Date.now()}),'Alineación guardada').then(()=>{ closeSheet(); say('Alineación guardada para los dos'); }); };
-  $$('#alList [data-load]').forEach(b=>b.onclick=()=>{ const a=T().alineaciones.find(x=>x._id===b.dataset.load); loadBoard(); board.tokens={...(a.tokens||{})}; board.sistema=a.sistema||null; board.rivalName=a.rivalName||null; board.rival=(a.rival||[]).map(r=>({...r})); board.strokes=(a.strokes||[]).map(s=>({...s})); saveBoard(); closeSheet(); renderPizarra(); say(`"${a.nombre}" cargada`); });
+  $$('#alList [data-load]').forEach(b=>b.onclick=()=>{ const a=T().alineaciones.find(x=>x._id===b.dataset.load); loadBoard(); board.tokens={...(a.tokens||{})}; board.sistema=a.sistema||null; board.rivalName=a.rivalName||null; board.rival=(a.rival||[]).map(r=>({...r})); board.strokes=(a.strokes||[]).map(s=>({...s})); dropAnim=true; saveBoard(); closeSheet(); renderPizarra(); say(`"${a.nombre}" cargada`); });
   $$('#alList [data-del]').forEach(b=>b.onclick=()=>{ if(!confirm('¿Borrar esta alineación guardada?')) return; write(()=>deleteDoc(tdoc('alineaciones',b.dataset.del)),'Borrada').then(()=>$('#lineupsBtn').click()); });
 };
 
@@ -957,7 +1029,6 @@ function openFicha(id){
       <label class="f">Fortalezas</label><textarea id="fFort" placeholder="Lo que mejor hace…">${esc(f.fortalezas||'')}</textarea>
       <label class="f" style="margin-top:10px">A mejorar</label><textarea id="fMej" placeholder="En qué debe trabajar…">${esc(f.mejorar||'')}</textarea>
       <label class="f" style="margin-top:10px">Notas del entrenador</label><textarea id="fNotas" placeholder="Observaciones, conversaciones con padres…">${esc(f.notas||'')}</textarea></div>
-    <div class="sec"><h3><i class="ti ti-sparkles"></i>Informe IA</h3><div id="fAI"><button class="btn ai" id="fGen"><i class="ti ti-sparkles"></i>Generar informe</button></div></div>
     <div class="sec"><h3><i class="ti ti-list-details"></i>Partido a partido</h3><div class="card">${log||'<p class="faint">Todavía no ha sido convocado.</p>'}</div></div>
     <div class="sec"><h3><i class="ti ti-edit"></i>Datos del jugador</h3>
       <div class="grid2"><div><label class="f">Nombre completo</label><input id="eNom" value="${esc(p.nombre||'')}"></div><div><label class="f">Dorsal</label><input id="eDor" type="number" inputmode="numeric" value="${p.dorsal==='?'?'':esc(p.dorsal)}"></div></div>
@@ -968,7 +1039,6 @@ function openFicha(id){
     `<button class="btn danger" id="fDel"><i class="ti ti-trash"></i></button><span style="flex:1"></span><button class="btn accent" id="fSave"><i class="ti ti-device-floppy"></i>Guardar ficha</button>`);
   $$('#dlg .star-row').forEach(row=>row.addEventListener('click',e=>{ const s=e.target.closest('span'); if(!s) return; const k=row.dataset.attr, v=+s.dataset.v;
     fichaStars[k]=fichaStars[k]===v?0:v; row.querySelectorAll('span').forEach(x=>x.classList.toggle('on',+x.dataset.v<=(fichaStars[k]||0))); $('#radarBox').innerHTML=radar(fichaStars); }));
-  $('#fGen').onclick=()=>genPlayerReport(p,s,att);
   $('#fSave').onclick=async()=>{
     const fichas={...T().fichas}; fichas[id]={fortalezas:$('#fFort').value,mejorar:$('#fMej').value,notas:$('#fNotas').value,stars:{...fichaStars}};
     const d=$('#eDor').value.trim();
@@ -979,20 +1049,6 @@ function openFicha(id){
     closeSheet(); say('Ficha guardada');
   };
   $('#fDel').onclick=()=>{ if(!confirm(`¿Eliminar a ${full(p)}? Los partidos ya guardados conservan su histórico.`)) return; write(()=>deleteDoc(tdoc('players',id)),'Jugador eliminado').then(closeSheet); };
-}
-async function genPlayerReport(p,s,att){
-  $('#fAI').innerHTML='<div class="ai-loading"><i></i><i></i><i></i><span>Generando informe…</span></div>';
-  const f=T().fichas[p._id]||{}, sv=fichaStars;
-  const l5=s.vals.slice(-5), trend=l5.length>=3?(l5[l5.length-1]>l5[0]?'ascendente':'descendente'):'sin datos';
-  const txt=await callAI(`Eres entrenador experto en fútbol base. Informe breve (máximo 5 frases) en español sobre este jugador:
-Jugador: ${p.nombre}, posición: ${p.pos}${p.pos2?' / '+p.pos2:''}, pierna: ${p.pie||'?'}
-Estadísticas: ${s.pj} partidos (${s.ti} titular), ${s.goles} goles, ${s.asis} asistencias, ${s.min} minutos
-Val. media: ${s.avg?s.avg.toFixed(1):'-'}/5. Tendencia: ${trend}. Asistencia a entrenos: ${att.pct==null?'-':att.pct+'%'}
-Atributos (1-5): ${STAR_ATTRS.map(([k,l])=>`${l} ${sv[k]||'?'}`).join(', ')}
-Fortalezas: ${f.fortalezas||'no especificadas'}. A mejorar: ${f.mejorar||'no especificado'}
-Estilo ojeador: qué destaca, evolución y qué trabajar.`);
-  $('#fAI').innerHTML=`<div class="ai-box"><div class="lbl"><i class="ti ti-sparkles"></i>Informe IA</div>${esc(txt)}</div><button class="btn ai sm" id="fGen" style="margin-top:8px"><i class="ti ti-refresh"></i>Regenerar</button>`;
-  $('#fGen').onclick=()=>genPlayerReport(p,s,att);
 }
 
 /* ═══════════════ RIVALES ═══════════════ */
@@ -1083,7 +1139,7 @@ function editMatch(m0){
       <label class="f">Crónica</label><textarea id="nCron" placeholder="Cómo fue el partido, qué funcionó, qué no…">${esc(notes.cronica||'')}</textarea>
       <label class="f" style="margin-top:10px">Informe del rival</label><textarea id="nRival" placeholder="Formación, jugadores que destacan, debilidades…">${esc(notes.rivalInfo||'')}</textarea>
       <label class="f" style="margin-top:10px">Contexto</label><textarea id="nCtx" placeholder="Campo, condiciones, árbitro, incidencias…" style="min-height:56px">${esc(notes.contexto||'')}</textarea></div>
-    ${isNew?'':'<div class="sec"><h3><i class="ti ti-sparkles"></i>Análisis IA</h3><div id="mAI"><button class="btn ai" id="mGen"><i class="ti ti-sparkles"></i>Analizar partido</button></div></div>'}`,
+`,
     `${isNew?'':'<button class="btn danger" id="mDel"><i class="ti ti-trash"></i></button>'}<span style="flex:1"></span><button class="btn accent" id="mSave"><i class="ti ti-device-floppy"></i>Guardar partido</button>`);
   const concSum=()=>{ const n=Object.values(m.gcDesglose).reduce((a,b)=>a+b,0); $('#concSum').textContent=`${n} de ${$('#mGc').value||0} goles explicados`; }; concSum();
   $('#mGc').addEventListener('input',concSum);
@@ -1101,7 +1157,6 @@ function editMatch(m0){
   $('#mConc').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const st=b.parentElement, c=st.dataset.c;
     m.gcDesglose[c]=Math.max(0,(m.gcDesglose[c]||0)+(+b.dataset.d)); const v=m.gcDesglose[c]; st.querySelector('b').textContent=v; st.querySelector('b').classList.toggle('z',!v);
     const tot=Object.values(m.gcDesglose).reduce((a,b2)=>a+b2,0); if((parseInt($('#mGc').value)||0)<tot) $('#mGc').value=tot; concSum(); });
-  if(!isNew) $('#mGen').onclick=()=>genMatchAnalysis(m0);
   $('#mSave').onclick=async()=>{
     const rival=$('#mRival').value.trim(); if(!rival){ say('Escribe el rival'); $('#mRival').focus(); return; }
     const pd=players().map(p=>({id:p._id,nombre:p.nombre,apodo:p.apodo||null,dorsal:p.dorsal,pos:p.pos,rol:state[p._id].rol,minutos:state[p._id].minutos,goles:state[p._id].goles,asistencias:state[p._id].asistencias,valoracion:state[p._id].valoracion||null}));
@@ -1116,20 +1171,6 @@ function editMatch(m0){
     closeSheet(); say('Partido guardado');
   };
   if(!isNew) $('#mDel').onclick=()=>{ if(!confirm('¿Eliminar este partido?')) return; write(()=>deleteDoc(tdoc('matches',m0._id)),'Partido eliminado').then(closeSheet); };
-}
-async function genMatchAnalysis(m){
-  $('#mAI').innerHTML='<div class="ai-loading"><i></i><i></i><i></i><span>Analizando partido…</span></div>';
-  const gc=Object.entries(m.gcDesglose||{}).filter(([,v])=>v>0).map(([k,v])=>`${k}:${v}`).join(', ')||'ninguno';
-  const top=(m.players||[]).filter(p=>p.goles>0).map(p=>`${p.nombre}(${p.goles}G)`).join(', ')||'ninguno';
-  const txt=await callAI(`Analiza este partido de fútbol base y da conclusiones útiles al entrenador (máximo 6 frases, español):
-Partido: vs ${m.rival} | Resultado ${m.gf}-${m.gc} | Fecha ${m.fecha}
-Goles marcados por: ${top}
-Goles encajados por: ${gc}
-Crónica: ${$('#nCron').value||'no disponible'}
-Info del rival: ${$('#nRival').value||'no disponible'}
-Contexto: ${$('#nCtx').value||'no disponible'}
-Da: 1) qué funcionó, 2) qué mejorar, 3) qué recordar del rival para la vuelta.`);
-  $('#mAI').innerHTML=`<div class="ai-box"><div class="lbl"><i class="ti ti-sparkles"></i>Análisis IA</div>${esc(txt)}</div>`;
 }
 
 /* ═══════════════ ASISTENCIA ═══════════════ */
@@ -1181,7 +1222,7 @@ function renderAtt(){
     <div class="stats" style="margin-top:12px;grid-template-columns:repeat(3,1fr)"><div class="stat"><b>${sum.teamPct}%</b><span>Asistencia media</span></div><div class="stat"><b>${rows.reduce((s,r)=>s+r.a,0)}</b><span>Faltas sin recuperar</span></div><div class="stat"><b>${rows.reduce((s,r)=>s+r.j,0)}</b><span>Sesiones recuperadas</span></div></div>
     <div class="card" style="margin-top:12px"><h3><i class="ti ti-chart-bar"></i>Quién viene más</h3><div style="margin-top:10px">${bars(rows.map(r=>({l:short(r.p),v:r.pct||0,txt:(r.pct||0)+'%',cls:(r.pct||0)>=85?'ok':(r.pct||0)<60?'bad':'warn'})),'',100)}</div></div>
     ${rec.length?`<div class="card"><h3><i class="ti ti-refresh"></i>Recuperadas con otro equipo</h3><div style="margin-top:10px">${bars(rec.map(r=>({l:short(r.p),v:r.j})),'info')}</div></div>`:''}`
-    :`<div class="empty" style="margin-top:12px"><i class="ti ti-calendar"></i><b>Todavía no hay sesiones</b>La asistencia empieza el ${fmtDate(ATT_START)}. Puedes añadir una sesión extra si entrenáis antes.</div>`;
+    :`<div class="empty" style="margin-top:12px"><i class="ti ti-calendar"></i><b>Todavía no hay sesiones</b>Aparecerán solas a partir del ${fmtDate(ATT_START)}, según los días que entrenáis.</div>`;
   $('#attList').innerHTML=ss.map(iso=>{ const cancel=a.cancel.includes(iso), extra=a.extra.includes(iso), marks=a.marks[iso]||{};
     const miss=ps.filter(p=>marks[p._id]&&marks[p._id]!=='p').length;
     return `<details class="sess${cancel?' cancel':''}" data-iso="${iso}"><summary><span class="d">${longDate(iso)}</span>${extra?'<span class="tag">extra</span>':''}${cancel?'<span class="tag warn">sin entreno</span>':miss?`<span class="muted" style="font-size:13px">${miss} incidencia${miss>1?'s':''}</span>`:''}<span class="mini-bar">${ps.map(p=>`<i class="st-${marks[p._id]||'p'}"></i>`).join('')}</span></summary>
@@ -1198,11 +1239,6 @@ function renderAtt(){
   $$('#attList [data-cancel]').forEach(b=>b.onclick=()=>{ const iso=b.dataset.cancel, A=getAtt(); const i=A.cancel.indexOf(iso); i>=0?A.cancel.splice(i,1):A.cancel.push(iso); T().attendance=A; renderAtt(); saveAtt(A); });
   $$('#attList [data-rmextra]').forEach(b=>b.onclick=()=>{ const A=getAtt(); A.extra=A.extra.filter(x=>x!==b.dataset.rmextra); T().attendance=A; renderAtt(); saveAtt(A); });
 }
-$('#attExtra').onclick=()=>{
-  openSheet('Sesión extra',`<p class="muted">Añade un entrenamiento fuera del calendario habitual (o una sesión recuperada en otro día).</p><label class="f" style="margin-top:12px">Fecha</label><input id="exDate" type="date" value="${todayISO()}">`,
-    '<span style="flex:1"></span><button class="btn accent" id="exOk">Añadir</button>');
-  $('#exOk').onclick=()=>{ const v=$('#exDate').value; if(!v){ say('Elige una fecha'); return; } const A=getAtt(); if(!A.extra.includes(v)) A.extra.push(v); T().attendance=A; closeSheet(); renderAtt(); saveAtt(A); };
-};
 
 /* ═══════════════ ESTADÍSTICAS ═══════════════ */
 function bars(rows,cls='',max){ max=max||Math.max(1,...rows.map(r=>r.v)); return `<div class="bars">${rows.map(r=>`<div class="bar"><span class="lab" title="${esc(r.l)}">${esc(r.l)}</span><div class="trk"><div class="fill ${r.cls||cls}" style="width:${(r.v/max*100).toFixed(1)}%"></div></div><span class="val">${r.txt??r.v}</span></div>`).join('')}</div>`; }
@@ -1316,74 +1352,8 @@ function renderObj(){
     $$('#objList [data-t]').forEach(b=>b.onclick=()=>write(()=>updateDoc(tdoc('objetivos',b.dataset.t),{done:b.dataset.d!=='1'}),'Actualizado'));
     $$('#objList [data-x]').forEach(b=>b.onclick=()=>{ if(confirm('¿Eliminar este objetivo?')) write(()=>deleteDoc(tdoc('objetivos',b.dataset.x)),'Eliminado'); });
   }
-  const ai=$('#objAI');
-  if(matches().length<3){ ai.innerHTML='<p class="faint" style="text-align:center;font-size:13px">Las sugerencias de la IA aparecen con al menos 3 partidos registrados.</p>'; return; }
-  if(!ai.dataset.loaded) ai.innerHTML=`<button class="btn ai block" id="objGen"><i class="ti ti-sparkles"></i>Sugerir objetivos con IA</button>`;
-  const g=$('#objGen'); if(g) g.onclick=genObjSuggestions;
-}
-async function genObjSuggestions(){
-  const ai=$('#objAI'); ai.dataset.loaded='1';
-  ai.innerHTML='<div class="card"><div class="ai-loading"><i></i><i></i><i></i><span>Analizando los últimos partidos…</span></div></div>';
-  const l5=matches().slice(0,5); const gcT={}; let gf=0,gc=0,w=0;
-  l5.forEach(m=>{ gf+=m.gf; gc+=m.gc; if(m.gf>m.gc)w++; Object.entries(m.gcDesglose||{}).forEach(([k,v])=>gcT[k]=(gcT[k]||0)+v); });
-  const topGc=Object.entries(gcT).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ');
-  const raw=await callAI(`Eres analista de fútbol base. Con los últimos ${l5.length} partidos del ${cfg().label} genera EXACTAMENTE 3 objetivos de trabajo. Devuelve SOLO JSON válido:
-[{"titulo":"...","descripcion":"...","prioridad":"Alta|Media|Baja"}]
-Datos: ${w}V de ${l5.length} | GF ${gf} GC ${gc} | Goles encajados por: ${topGc||'sin datos'}
-Concretos y accionables para un entrenamiento de fútbol base.`);
-  try{
-    const sug=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    ai.innerHTML=`<div class="card"><h3><i class="ti ti-sparkles"></i>Sugerencias IA <small>últimos ${l5.length} partidos</small></h3>${sug.map((s,i)=>`<div class="obj"><div style="flex:1;min-width:0"><div class="t">${esc(s.titulo)}</div><div class="n">${esc(s.descripcion)}</div></div><span class="tag ${({Alta:'bad',Media:'warn',Baja:'info'})[s.prioridad]||''}">${esc(s.prioridad)}</span><button class="btn ghost sm" data-add="${i}">Añadir</button></div>`).join('')}<button class="btn soft sm" id="objGen" style="margin-top:8px"><i class="ti ti-refresh"></i>Regenerar</button></div>`;
-    $$('#objAI [data-add]').forEach(b=>b.onclick=()=>{ const s=sug[+b.dataset.add]; write(()=>addDoc(col('objetivos'),{titulo:s.titulo,nota:s.descripcion,prioridad:s.prioridad,done:false,ts:Date.now()}),'Objetivo añadido'); b.disabled=true; b.textContent='Añadido'; });
-    $('#objAI #objGen').onclick=genObjSuggestions;
-  }catch(e){ ai.dataset.loaded=''; ai.innerHTML='<p class="faint" style="text-align:center;font-size:13px">No se pudieron generar sugerencias. <button class="btn soft sm" id="objGen">Reintentar</button></p>'; $('#objGen').onclick=genObjSuggestions; }
 }
 
-/* ═══════════════ CHAT IA ═══════════════ */
-let chatHistory=[];
-function buildCtx(){
-  const ms=matches(), ps=players();
-  let gf=0,gc=0,w=0,d=0,l=0; const gcT={};
-  ms.forEach(m=>{ gf+=m.gf; gc+=m.gc; m.gf>m.gc?w++:m.gf===m.gc?d++:l++; Object.entries(m.gcDesglose||{}).forEach(([k,v])=>gcT[k]=(gcT[k]||0)+v); });
-  const sum=ps.map(p=>{ const s=playerStats(p._id), a=attPlayer(p._id), f=T().fichas[p._id]||{};
-    return `${short(p)} (${p.nombre}, ${p.pos}): ${s.pj}P ${s.ti}T ${s.min}min ${s.goles}G ${s.asis}A val ${s.avg?s.avg.toFixed(1):'-'} asistencia ${a.pct==null?'-':a.pct+'%'}${f.mejorar?` | a mejorar: ${f.mejorar.slice(0,80)}`:''}`; }).join('\n');
-  const notes=Object.entries(T().matchNotes).map(([id,n])=>{ const m=ms.find(x=>x._id===id); if(!m) return ''; const parts=[]; if(n.cronica) parts.push(`Crónica vs ${m.rival} (${m.fecha}): ${n.cronica.slice(0,150)}`); if(n.rivalInfo) parts.push(`Rival ${m.rival}: ${n.rivalInfo.slice(0,150)}`); return parts.join(' | '); }).filter(Boolean).join('\n');
-  const rivals=T().rivales.filter(r=>(r.jugadores||[]).length||r.notas).map(r=>`${r.nombre}${r.sistema?` (${r.sistema})`:''}: ${(r.jugadores||[]).map(j=>`#${j.dorsal??'?'} ${j.nombre||''} ${j.nota||''}`.trim()).join('; ')} ${r.notas||''}`).join('\n');
-  const objs=T().objetivos.filter(o=>!o.done).map(o=>`${o.prioridad}: ${o.titulo}`).join('; ');
-  return `Equipo: ${cfg().label} (fútbol ${cfg().fmt})
-Partidos: ${ms.length} | ${w}V ${d}E ${l}D | GF ${gf} GC ${gc}
-Goles encajados por: ${Object.entries(gcT).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>`${k}:${v}`).join(', ')||'sin datos'}
-Objetivos abiertos: ${objs||'ninguno'}
-Jugadores:\n${sum}${rivals?'\nRivales:\n'+rivals:''}${notes?'\nNotas de partidos:\n'+notes:''}`;
-}
-function renderChat(){
-  $('#chatSugs').innerHTML=CHAT_SUGS.map(s=>`<button data-q="${esc(s)}">${s}</button>`).join('');
-  $$('#chatSugs button').forEach(b=>b.onclick=()=>{ $('#chatIn').value=b.dataset.q; sendChat(); });
-  paintChat();
-}
-function paintChat(extra=''){
-  const w=$('#chatWrap');
-  w.innerHTML=chatHistory.length?chatHistory.map(m=>`<div class="msg ${m.role}">${esc(m.content)}</div>`).join('')+extra
-    :'<div class="empty" style="border:0;background:transparent"><i class="ti ti-message-chatbot"></i>Pregunta lo que quieras sobre tu equipo</div>';
-  w.scrollTop=w.scrollHeight;
-}
-$('#chatSend').onclick=sendChat;
-$('#chatIn').addEventListener('keydown',e=>{ if(e.key==='Enter') sendChat(); });
-async function sendChat(){
-  const inp=$('#chatIn'), text=inp.value.trim(); if(!text) return; inp.value='';
-  chatHistory.push({role:'user',content:text});
-  paintChat('<div class="msg assistant"><div class="ai-loading" style="padding:0"><i></i><i></i><i></i></div></div>');
-  const reply=await callAI(`Eres el asistente del entrenador del ${cfg().label} (fútbol base). Responde en español, conciso y directo (máximo 5 frases). Usa solo los datos reales, no inventes.
-
-Datos de la temporada:
-${buildCtx()}
-
-Conversación previa:
-${chatHistory.slice(-5,-1).map(m=>m.role+': '+m.content).join('\n')}
-
-Pregunta: ${text}`);
-  chatHistory.push({role:'assistant',content:reply}); paintChat();
-}
 
 init();
 </script>
