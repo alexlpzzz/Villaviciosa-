@@ -104,7 +104,6 @@ nav.tabs button:active{transform:none}
 .more-menu button .ti{font-size:22px;color:var(--navy-600)}
 .more-menu button.on{background:var(--navy-900);color:#fff}.more-menu button.on .ti{color:var(--accent)}
 #s-pizarra .head{position:sticky;top:calc(var(--top-h) - 1px);z-index:15;margin:0 -16px 8px;padding:12px 16px 10px;background:linear-gradient(to bottom,var(--bg) 78%,rgba(243,245,249,0));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-#s-pizarra .chipbar{position:sticky;top:calc(var(--top-h) + 58px);z-index:14;background:var(--bg);margin:0 -16px;padding:2px 16px 8px}
 @media (min-width:960px){
   .shell.on{grid-template-columns:210px 1fr}
   .top{grid-column:1/-1}
@@ -171,13 +170,27 @@ nav.tabs .desk-only{display:none}
 .avatar.lg{width:56px;height:56px;font-size:26px}.avatar.lg::after{width:15px;height:15px;border-width:3px}
 
 /* ── Pizarra ── */
-.pitch-area{display:grid;gap:12px}
-@media (min-width:960px){.pitch-area{grid-template-columns:minmax(0,1fr) 300px;align-items:start}}
-.pitch-wrap{position:relative;width:100%;margin:0 auto;aspect-ratio:68/105;max-height:72dvh;filter:drop-shadow(0 18px 30px rgba(11,31,58,.35))}
-.pitch-wrap.f7{aspect-ratio:50/70;max-height:64dvh}
+.boards{display:grid;gap:14px}
+.boards.multi{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.board{background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:10px;box-shadow:var(--shadow-sm);transition:border-color .18s ease,box-shadow .18s ease;animation:rise .4s var(--ease-out) both}
+.boards.multi .board.active{border-color:var(--navy-500);box-shadow:0 0 0 3px rgba(47,102,174,.14)}
+.board-h{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.board-h .bname{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:19px;padding:2px 6px;border-radius:8px;flex:1;min-width:80px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board-h .bname:hover{background:var(--panel-2)}
+.board-h .bcount{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:15px;color:var(--ink-3);padding:2px 8px;border-radius:999px;background:var(--panel-2)}
+.board-h .bcount.over{color:var(--warn);background:var(--warn-bg)}
+.board-h .bform{width:auto;padding:6px 26px 6px 9px;font-size:13px;font-weight:600;border-radius:9px}
+.board-h [data-a]{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2)}
+.board-h [data-a]:hover{background:var(--panel-2);color:var(--ink)}
+.board-h [data-a].danger:hover{background:var(--bad-bg);color:var(--bad)}
+.board-h [data-a] .ti{font-size:18px}
+.pitch-wrap{position:relative;width:100%;margin:0 auto;aspect-ratio:68/105;max-height:68dvh;filter:drop-shadow(0 12px 22px rgba(11,31,58,.28))}
+.pitch-wrap.f7{aspect-ratio:50/70;max-height:60dvh}
+.boards.multi .pitch-wrap{max-height:52dvh}
 .pitch{position:absolute;inset:0;border-radius:10px;overflow:hidden;touch-action:none;background:repeating-linear-gradient(0deg,var(--pitch-a) 0 10%,var(--pitch-b) 10% 20%);transition:box-shadow .15s ease}
 .pitch.hot{box-shadow:0 0 0 3px var(--accent) inset}
-.pitch svg.lines{position:absolute;inset:0;width:100%;height:100%}
+.pitch svg.lines,.pitch svg.draw{position:absolute;inset:0;width:100%;height:100%}
+.pitch svg.draw{pointer-events:none;z-index:3}
 .pitch svg.lines *{fill:none;stroke:var(--pitch-line);stroke-width:.35;vector-effect:non-scaling-stroke}
 .pitch svg.lines .spot{fill:var(--pitch-line);stroke:none}
 .pitch .side-lbl{position:absolute;left:10px;font-family:"Barlow Condensed",sans-serif;font-size:12px;letter-spacing:.08em;color:rgba(255,255,255,.55);pointer-events:none}
@@ -196,6 +209,8 @@ nav.tabs .desk-only{display:none}
 .bchip{display:inline-flex;align-items:center;gap:8px;padding:5px 10px 5px 5px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line-soft);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;font-weight:500;font-size:14px}
 .bchip .avatar{width:28px;height:28px;font-size:14px;background:#fff;color:var(--navy-900);border:1px solid var(--line)}
 .bchip .avatar::after{border-color:var(--panel-2)}
+.bchip.placed{border-color:var(--navy-500);background:var(--panel)}
+.bchip .tag{font-size:12px;padding:1px 5px}
 .tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 10px}
 .tools .tb{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
 .tools .tb button{width:40px;height:36px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2)}
@@ -203,18 +218,15 @@ nav.tabs .desk-only{display:none}
 .tools .tb button.on{background:var(--navy-900);color:#fff}
 .tools .col{width:26px;height:26px;border-radius:50%;border:2px solid transparent;margin:0 2px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
 .tools .col.on{border-color:var(--navy-900)}
-#draw{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
-#draw line,#draw polyline{vector-effect:non-scaling-stroke;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:3.5}
-#draw marker{overflow:visible}
-#draw .hit{stroke:transparent;stroke-width:14;pointer-events:stroke;cursor:pointer}
-.pitch.drawing{cursor:crosshair}.pitch.drawing .token{pointer-events:none}.pitch.drawing #draw{pointer-events:auto}
-.pitch.erasing .token{pointer-events:none}.pitch.erasing #draw .hit{pointer-events:stroke}
+#draw line,#draw polyline,.pitch .draw line,.pitch .draw polyline{vector-effect:non-scaling-stroke;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:3.5}
+.pitch .draw .hit{stroke:transparent;stroke-width:14;pointer-events:stroke;cursor:pointer}
+.pitch.drawing{cursor:crosshair}.pitch.drawing .token{pointer-events:none}.pitch.drawing .draw{pointer-events:auto}
+.pitch.erasing .token{pointer-events:none}.pitch.erasing .draw{pointer-events:none}.pitch.erasing .draw .hit{pointer-events:stroke}
 .pop{position:absolute;z-index:12;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:flex;gap:4px;animation:pop .16s var(--ease-out)}
 @keyframes pop{from{opacity:0;transform:translate(-50%,-100%) scale(.92)}to{opacity:1;transform:translate(-50%,-100%)}}
 .pop button{padding:7px 10px;border-radius:8px;font-weight:600;font-size:14px}
 .pop button:hover{background:var(--panel-2)}.pop button.bad{color:var(--bad)}
-.rival-add{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.rival-add input{width:74px;text-align:center}
+
 
 /* ── Plantilla ── */
 .adder{display:grid;grid-template-columns:70px 1fr;gap:8px}
@@ -431,8 +443,7 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
 
     <section class="screen" id="s-pizarra">
       <div class="head"><div><h1 id="pz-title">Pizarra</h1><p id="pz-sub"></p></div>
-        <div class="row" style="gap:6px"><button class="btn ghost sm" id="lineupsBtn"><i class="ti ti-bookmarks"></i>Alineaciones</button><button class="btn accent sm" id="snapBtn"><i class="ti ti-camera"></i>Imagen</button></div></div>
-      <div class="chipbar" id="formChips"></div>
+        <div class="row" style="gap:6px"><button class="btn ghost sm" id="addBoard"><i class="ti ti-plus"></i>Añadir campo</button><button class="btn accent sm" id="lineupsBtn"><i class="ti ti-bookmarks"></i>Alineaciones</button></div></div>
       <div class="tools">
         <div class="tb" id="toolBar">
           <button data-t="move" class="on" title="Mover fichas"><i class="ti ti-arrows-move"></i></button>
@@ -442,38 +453,12 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
           <button data-t="erase" title="Borrar un trazo"><i class="ti ti-eraser"></i></button>
         </div>
         <div class="tb" id="colBar" style="padding:5px 6px"><button class="col on" data-c="#FFFFFF" style="background:#fff"></button><button class="col" data-c="#FFC940" style="background:#FFC940"></button><button class="col" data-c="#EA4C57" style="background:#EA4C57"></button><button class="col" data-c="#3B8BEB" style="background:#3B8BEB"></button></div>
-        <button class="btn soft sm" id="clearDraw"><i class="ti ti-eraser-off"></i>Borrar dibujos</button>
       </div>
-      <div class="pitch-area">
-        <div>
-          <div class="pitch-wrap" id="pitchWrap">
-            <div class="pitch" id="pitch">
-              <svg class="lines" id="pitchSvg"></svg>
-              <svg id="draw" viewBox="0 0 68 105"><defs id="drawDefs"></defs><g id="strokes"></g></svg>
-              <span class="side-lbl" style="top:8px">RIVAL</span>
-              <span class="side-lbl" style="bottom:8px">NOSOTROS</span>
-              <div class="hint" id="hint"><span>Arrastra jugadores desde el banquillo<br>o elige un sistema</span></div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="card bench">
-            <h3><i class="ti ti-shirt-sport"></i>Banquillo<span class="cnt" id="benchCnt"></span></h3>
-            <div class="bench-list" id="benchList"></div>
-          </div>
-          <div class="card bench" style="margin-top:12px">
-            <h3><i class="ti ti-shield-half"></i>Rival<span class="cnt" id="rivalCnt"></span></h3>
-            <div class="row" style="gap:8px;margin-top:10px">
-              <select id="rivalPick" style="flex:1"></select>
-              <button class="btn ghost sm" id="rivalLoad">Colocar</button>
-            </div>
-            <div class="rival-add">
-              <input id="rivNum" type="number" inputmode="numeric" placeholder="Nº">
-              <button class="btn ghost sm" id="rivAdd">Añadir ficha rival</button>
-              <button class="btn soft sm" id="rivClear">Quitar todas</button>
-            </div>
-          </div>
-        </div>
+      <div class="boards" id="boards"></div>
+      <div class="card bench" style="margin-top:12px">
+        <h3><i class="ti ti-shirt-sport"></i>Jugadores<span class="cnt" id="benchCnt"></span></h3>
+        <div class="bench-list" id="benchList"></div>
+        <p class="faint" style="font-size:13px;margin-top:10px">Arrastra a cualquier campo. Un mismo jugador puede estar en varios a la vez. Toca una ficha del campo para quitarla o abrir su ficha.</p>
       </div>
     </section>
 
@@ -533,6 +518,7 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
   </main>
 </div>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="drawDefs"></defs></svg>
 <div class="toast" id="toast"></div>
 <dialog id="dlg"></dialog>
 <script type="module">
@@ -756,10 +742,24 @@ function renderAlerts(){
 }
 
 /* ═══════════════ PIZARRA ═══════════════ */
-const BK=()=>'vestuario-board-'+team;
-let board=null;
-function loadBoard(){ let b=null; try{ b=JSON.parse(localStorage.getItem(BK())||'null'); }catch(e){} board=Object.assign({tokens:{},sistema:null,rival:[],rivalName:null,strokes:[]},b||{}); return board; }
-function saveBoard(){ try{ localStorage.setItem(BK(),JSON.stringify(board)); }catch(e){} }
+const BK_BOARDS=()=>'vestuario-campos-'+team;
+let boards=[], activeBoard=null, dropAnim=null;
+const newBoard=(n)=>({id:uid(),nombre:n||'Campo '+(boards.length+1),tokens:{},sistema:null,rival:[],rivalName:null,strokes:[]});
+function loadBoards(){
+  let raw=null; try{ raw=JSON.parse(localStorage.getItem(BK_BOARDS())||'null'); }catch(e){}
+  if(Array.isArray(raw)&&raw.length) boards=raw.map(b=>Object.assign(newBoard(),b));
+  else if(raw&&raw.tokens) boards=[Object.assign(newBoard('Campo 1'),raw)];          // formato antiguo de un solo campo
+  else{
+    let old=null; try{ old=JSON.parse(localStorage.getItem('vestuario-board-'+team)||'null'); }catch(e){}
+    boards=[old?Object.assign(newBoard('Campo 1'),old):newBoard('Campo 1')];
+  }
+  boards.forEach(b=>{ Object.keys(b.tokens).forEach(id=>{ if(!byId(id)) delete b.tokens[id]; }); });
+  if(!boards.some(b=>b.id===activeBoard)) activeBoard=boards[0].id;
+  return boards;
+}
+function saveBoards(){ try{ localStorage.setItem(BK_BOARDS(),JSON.stringify(boards)); }catch(e){} }
+const B=id=>boards.find(b=>b.id===id);
+
 function pitchSVG(){
   const {w,h}=cfg().pitch, cx=w/2, cy=h/2, f11=cfg().fmt===11;
   const b=f11?{w:40.32,h:16.5,gw:18.32,gh:5.5,pen:11,r:9.15}:{w:26,h:11,gw:12,gh:4,pen:8,r:6};
@@ -769,57 +769,102 @@ function pitchSVG(){
     <rect x="${cx-b.w/2}" y="${h-1-b.h}" width="${b.w}" height="${b.h}"/><rect x="${cx-b.gw/2}" y="${h-1-b.gh}" width="${b.gw}" height="${b.gh}"/><circle class="spot" cx="${cx}" cy="${h-1-b.pen}" r=".5"/><path d="M ${cx-dx} ${h-1-b.h} A ${b.r} ${b.r} 0 0 1 ${cx+dx} ${h-1-b.h}"/>`;
 }
 function renderPizarra(){
-  loadBoard(); const c=cfg();
-  Object.keys(board.tokens).forEach(id=>{ if(!byId(id)) delete board.tokens[id]; });
-  const on=Object.keys(board.tokens).length;
+  loadBoards(); const c=cfg(), fmts=Object.keys(FORM[c.fmt]);
   $('#pz-title').textContent=`Pizarra · ${c.label} F${c.fmt}`;
-  $('#pz-sub').textContent=`${on}/${c.fmt} en el campo${board.sistema?' · '+board.sistema:''}${board.rivalName?' · vs '+board.rivalName:''}`;
-  $('#pitchWrap').classList.toggle('f7',c.fmt===7);
-  $('#pitchSvg').setAttribute('viewBox',`0 0 ${c.pitch.w} ${c.pitch.h}`); $('#pitchSvg').setAttribute('preserveAspectRatio','none'); $('#pitchSvg').innerHTML=pitchSVG();
-  $('#draw').setAttribute('viewBox',`0 0 ${c.pitch.w} ${c.pitch.h}`);
-  $('#formChips').innerHTML=Object.keys(FORM[c.fmt]).map(k=>`<button class="chip${board.sistema===k?' on':''}" data-f="${k}">${k}</button>`).join('')+`<button class="chip icon" id="clearOwn"><i class="ti ti-trash" style="font-size:16px"></i>Vaciar campo</button>`;
-  $$('#formChips [data-f]').forEach(b=>b.onclick=()=>applyFormation(b.dataset.f));
-  $('#clearOwn').onclick=()=>{ board.tokens={}; board.sistema=null; saveBoard(); renderPizarra(); };
-  const rv=T().rivales; $('#rivalPick').innerHTML=`<option value="">${rv.length?'Elige rival guardado':'Sin rivales guardados'}</option>`+rv.map(r=>`<option value="${r._id}"${board.rivalName===r.nombre?' selected':''}>${esc(r.nombre)}${r.sistema?' · '+esc(r.sistema):''}</option>`).join('');
-  $('#rivalCnt').textContent=board.rival.length?`${board.rival.length} en el campo`:'';
-  renderPitch();
+  $('#pz-sub').textContent=boards.length>1?`${boards.length} campos para comparar alineaciones`:'Arrastra a tus jugadores al campo o elige un sistema';
+  $('#boards').className='boards'+(boards.length>1?' multi':'');
+  $('#boards').innerHTML=boards.map(b=>{
+    const n=Object.keys(b.tokens).length, over=n>c.fmt;
+    return `<div class="board${b.id===activeBoard?' active':''}${boards.length>1?'':' solo'}" data-b="${b.id}">
+      <div class="board-h">
+        <button class="bname" data-a="name" title="Cambiar nombre">${esc(b.nombre)}</button>
+        <span class="bcount ${over?'over':''}" title="Fichas en el campo">${n}/${c.fmt}</span>
+        <select class="bform" aria-label="Sistema"><option value="">Sistema…</option>${fmts.map(f=>`<option${b.sistema===f?' selected':''}>${f}</option>`).join('')}</select>
+        <button data-a="img" title="Guardar imagen"><i class="ti ti-camera"></i></button>
+        <button data-a="dup" title="Duplicar campo"><i class="ti ti-copy"></i></button>
+        <button data-a="clear" title="Vaciar campo"><i class="ti ti-eraser-off"></i></button>
+        ${boards.length>1?`<button data-a="del" class="danger" title="Borrar campo"><i class="ti ti-trash"></i></button>`:''}
+      </div>
+      <div class="pitch-wrap${c.fmt===7?' f7':''}">
+        <div class="pitch" data-b="${b.id}">
+          <svg class="lines" viewBox="0 0 ${c.pitch.w} ${c.pitch.h}" preserveAspectRatio="none">${pitchSVG()}</svg>
+          <svg class="draw" viewBox="0 0 ${c.pitch.w} ${c.pitch.h}"><g class="strokes"></g></svg>
+          <span class="side-lbl" style="top:8px">RIVAL</span><span class="side-lbl" style="bottom:8px">NOSOTROS</span>
+          <div class="hint"><span>Arrastra jugadores aquí<br>o elige un sistema</span></div>
+        </div>
+      </div></div>`; }).join('');
+  boards.forEach(b=>paintBoard(b.id));
+  $$('#boards .board').forEach(el=>{
+    const id=el.dataset.b;
+    el.addEventListener('pointerdown',()=>{ if(activeBoard!==id){ activeBoard=id; $$('#boards .board').forEach(x=>x.classList.toggle('active',x.dataset.b===id)); } },true);
+    el.querySelector('.bform').onchange=e=>{ if(e.target.value) applyFormation(id,e.target.value); };
+    el.querySelectorAll('[data-a]').forEach(btn=>btn.onclick=()=>boardAction(id,btn.dataset.a));
+    const draw=el.querySelector('.draw');
+    draw.addEventListener('pointerdown',e=>startStroke(e,id));
+  });
+  renderBench();
 }
-let dropAnim=false;
-function renderPitch(){
-  const pitch=$('#pitch'); pitch.querySelectorAll('.token,.pop').forEach(x=>x.remove());
-  const on=players().filter(p=>board.tokens[p._id]);
-  on.forEach(p=>{ const t=board.tokens[p._id]; pitch.appendChild(makeToken({kind:'own',id:p._id,num:dorsal(p),label:short(p),x:t.x,y:t.y})); });
-  board.rival.forEach(r=>pitch.appendChild(makeToken({kind:'rival',id:r.id,num:r.num,label:r.label||'',x:r.x,y:r.y})));
-  pitch.classList.toggle('drop',dropAnim);
-  if(dropAnim){ [...pitch.querySelectorAll('.token')].forEach((t,i)=>t.style.animationDelay=(i*0.035).toFixed(2)+'s'); dropAnim=false; setTimeout(()=>pitch.classList.remove('drop'),700); }
-  renderStrokes(); syncMode();
-  $('#hint').style.display=(on.length||board.rival.length||board.strokes.length)?'none':'grid';
-  $('#benchCnt').textContent=`${on.length}/${cfg().fmt} en el campo`;
-  const bench=players().filter(p=>!board.tokens[p._id]);
-  $('#benchList').innerHTML=bench.length?bench.map(p=>`<div class="bchip" data-id="${p._id}"><span class="avatar" style="--pc:${lineVar(p)}">${dorsal(p)}</span>${esc(short(p))}</div>`).join(''):(T().players.length?`<span class="faint" style="font-size:14px">Todos en el campo.</span>`:`<span class="faint" style="font-size:14px">Añade jugadores en Plantilla.</span>`);
-  $$('#benchList .bchip').forEach(el=>el.addEventListener('pointerdown',e=>startDrag(e,{kind:'own',id:el.dataset.id},false)));
+function boardAction(id,a){
+  const b=B(id);
+  if(a==='name'){ const v=prompt('Nombre de este campo',b.nombre); if(v!==null&&v.trim()) b.nombre=v.trim(); }
+  if(a==='clear'){ b.tokens={}; b.sistema=null; b.rival=[]; b.rivalName=null; b.strokes=[]; }
+  if(a==='dup'){ const copy=JSON.parse(JSON.stringify(b)); copy.id=uid(); copy.nombre=b.nombre+' (copia)'; boards.splice(boards.indexOf(b)+1,0,copy); activeBoard=copy.id; dropAnim=copy.id; }
+  if(a==='del'){ if(!confirm(`¿Borrar "${b.nombre}"?`)) return; boards=boards.filter(x=>x.id!==id); if(activeBoard===id) activeBoard=boards[0].id; }
+  if(a==='img'){ snapshot(id); return; }
+  saveBoards(); renderPizarra();
 }
-function makeToken(o){
+$('#addBoard').onclick=()=>{ loadBoards(); const b=newBoard(); boards.push(b); activeBoard=b.id; saveBoards(); renderPizarra(); say('Campo añadido'); };
+
+function paintBoard(id){
+  const b=B(id), pitch=$(`#boards .pitch[data-b="${id}"]`); if(!pitch) return;
+  pitch.querySelectorAll('.token,.pop').forEach(x=>x.remove());
+  players().filter(p=>b.tokens[p._id]).forEach(p=>{ const t=b.tokens[p._id]; pitch.appendChild(makeToken(id,{kind:'own',id:p._id,num:dorsal(p),label:short(p),x:t.x,y:t.y})); });
+  b.rival.forEach(r=>pitch.appendChild(makeToken(id,{kind:'rival',id:r.id,num:r.num,label:r.label||'',x:r.x,y:r.y})));
+  const g=pitch.querySelector('.strokes'); g.innerHTML=''; b.strokes.forEach(s=>g.appendChild(strokeEl(id,s)));
+  pitch.querySelector('.hint').style.display=(Object.keys(b.tokens).length||b.rival.length||b.strokes.length)?'none':'grid';
+  pitch.classList.toggle('drawing',tool!=='move'&&tool!=='erase');
+  pitch.classList.toggle('erasing',tool==='erase');
+  if(dropAnim===id){ pitch.classList.add('drop'); [...pitch.querySelectorAll('.token')].forEach((t,i)=>t.style.animationDelay=(i*0.035).toFixed(2)+'s'); dropAnim=null; setTimeout(()=>pitch.classList.remove('drop'),800); }
+}
+function renderBench(){
+  const c=cfg(), ps=players();
+  const placed=id=>boards.filter(b=>b.tokens[id]).length;
+  $('#benchCnt').textContent=ps.length?`${ps.length} en plantilla`:'';
+  $('#benchList').innerHTML=ps.length?ps.map(p=>{ const n=placed(p._id);
+    return `<div class="bchip${n?' placed':''}" data-id="${p._id}"><span class="avatar" style="--pc:${lineVar(p)}">${dorsal(p)}</span>${esc(short(p))}${n>1?`<span class="tag">×${n}</span>`:''}</div>`; }).join('')
+    :`<span class="faint" style="font-size:14px">Añade jugadores en Plantilla.</span>`;
+  $$('#benchList .bchip').forEach(el=>el.addEventListener('pointerdown',e=>startDrag(e,{kind:'own',id:el.dataset.id,board:null})));
+}
+function makeToken(bid,o){
   const el=document.createElement('div'); el.className=`token ${o.kind}`; el.dataset.id=o.id; el.style.left=o.x+'%'; el.style.top=o.y+'%';
   el.innerHTML=`<div class="disc">${o.num??'·'}</div>${o.label?`<div class="name">${esc(o.label)}</div>`:''}`;
-  el.addEventListener('pointerdown',e=>startDrag(e,{kind:o.kind,id:o.id},true)); return el;
+  el.addEventListener('pointerdown',e=>startDrag(e,{kind:o.kind,id:o.id,board:bid}));
+  return el;
 }
-function tokenData(ref){
-  if(ref.kind==='own'){ const p=byId(ref.id); return {num:dorsal(p),label:short(p),obj:board.tokens[ref.id]||null,p}; }
-  const r=board.rival.find(x=>x.id===ref.id); return {num:r.num,label:r.label||'',obj:r};
+function tokenInfo(ref){
+  if(ref.kind==='own'){ const p=byId(ref.id); return {num:dorsal(p),label:short(p)}; }
+  const b=B(ref.board), r=b?.rival.find(x=>x.id===ref.id); return {num:r?.num,label:r?.label||''};
 }
+/* ── arrastre ── */
 let drag=null;
-function startDrag(e,ref,fromPitch){
+function pitchAt(e){
+  for(const el of $$('#boards .pitch')){ const r=el.getBoundingClientRect();
+    if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom) return {el,r,id:el.dataset.b}; }
+  return null;
+}
+function startDrag(e,ref){
   if(drag) return;
   if(e.button!==undefined&&e.button!==0) return;
-  if(tool!=='move') return;            // en modo dibujo las fichas no se mueven
+  if(tool!=='move') return;
   e.preventDefault(); e.stopPropagation();
-  const d=tokenData(ref), ghost=document.createElement('div'); ghost.className=`token ${ref.kind} ghost lift`;
-  ghost.innerHTML=`<div class="disc">${d.num??'·'}</div>${d.label?`<div class="name">${esc(d.label)}</div>`:''}`; document.body.appendChild(ghost);
-  const orig=fromPitch?$('#pitch').querySelector(`.token[data-id="${ref.id}"]`):null; if(orig) orig.style.visibility='hidden';
-  const src=e.currentTarget;
-  try{ src.setPointerCapture?.(e.pointerId); }catch(_){}
-  drag={ref,ghost,orig,fromPitch,moved:false,sx:e.clientX,sy:e.clientY,pid:e.pointerId,src}; moveGhost(e);
+  const d=tokenInfo(ref), ghost=document.createElement('div'); ghost.className=`token ${ref.kind} ghost lift`;
+  ghost.innerHTML=`<div class="disc">${d.num??'·'}</div>${d.label?`<div class="name">${esc(d.label)}</div>`:''}`;
+  document.body.appendChild(ghost);
+  const orig=ref.board?$(`#boards .pitch[data-b="${ref.board}"] .token[data-id="${ref.id}"]`):null;
+  if(orig) orig.style.visibility='hidden';
+  const src=e.currentTarget; try{ src.setPointerCapture?.(e.pointerId); }catch(_){}
+  drag={ref,ghost,orig,moved:false,sx:e.clientX,sy:e.clientY,pid:e.pointerId,src};
+  moveGhost(e);
   window.addEventListener('pointermove',onMove,{passive:false});
   window.addEventListener('pointerup',onUp); window.addEventListener('pointercancel',onUp);
 }
@@ -828,89 +873,103 @@ function endDrag(){
   if(drag){ try{ drag.src.releasePointerCapture?.(drag.pid); }catch(_){} }
 }
 function moveGhost(e){ drag.ghost.style.left=e.clientX+'px'; drag.ghost.style.top=e.clientY+'px'; }
-function inside(e){ const r=$('#pitch').getBoundingClientRect(); return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom?r:null; }
-function onMove(e){ if(!drag) return; if(e.pointerId!==undefined&&e.pointerId!==drag.pid) return; e.preventDefault(); if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>5) drag.moved=true; moveGhost(e); $('#pitch').classList.toggle('hot',!!inside(e)); }
+function onMove(e){
+  if(!drag) return; if(e.pointerId!==undefined&&e.pointerId!==drag.pid) return;
+  e.preventDefault(); if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>5) drag.moved=true; moveGhost(e);
+  const hit=pitchAt(e); $$('#boards .pitch').forEach(el=>el.classList.toggle('hot',!!hit&&hit.el===el));
+}
 function onUp(e){
   if(!drag) return; if(e.pointerId!==undefined&&e.pointerId!==drag.pid) return;
   endDrag();
-  const {ref,ghost,orig,fromPitch,moved}=drag; drag=null; ghost.remove(); $('#pitch').classList.remove('hot');
+  const {ref,ghost,orig,moved}=drag; drag=null; ghost.remove();
+  $$('#boards .pitch').forEach(el=>el.classList.remove('hot'));
   if(pendingRender){ pendingRender=false; render(); }
-  if(!moved&&fromPitch){ const el=$('#pitch').querySelector(`.token[data-id="${ref.id}"]`)||orig; if(el) el.style.visibility=''; if(el) showPop(ref,el); return; }
-  const r=inside(e);
-  if(r){
-    const x=clamp((e.clientX-r.left)/r.width*100,4,96), y=clamp((e.clientY-r.top)/r.height*100,4,96);
-    if(ref.kind==='own'){ const on=Object.keys(board.tokens).length; if(!board.tokens[ref.id]&&on>=cfg().fmt){ say(`Ya tienes ${cfg().fmt} en el campo`); } else { board.tokens[ref.id]={x,y}; board.sistema=null; } }
-    else { const rv=board.rival.find(z=>z.id===ref.id); rv.x=x; rv.y=y; }
-  } else if(fromPitch){
-    if(ref.kind==='own'){ delete board.tokens[ref.id]; board.sistema=null; say(`${short(byId(ref.id))} al banquillo`); }
-    else board.rival=board.rival.filter(z=>z.id!==ref.id);
+  if(!moved&&ref.board){ const el=$(`#boards .pitch[data-b="${ref.board}"] .token[data-id="${ref.id}"]`)||orig; if(el){ el.style.visibility=''; showPop(ref,el); } return; }
+  const hit=pitchAt(e);
+  if(hit){
+    const dst=B(hit.id), x=clamp((e.clientX-hit.r.left)/hit.r.width*100,4,96), y=clamp((e.clientY-hit.r.top)/hit.r.height*100,4,96);
+    if(ref.kind==='own'){
+      if(ref.board&&ref.board!==hit.id) delete B(ref.board).tokens[ref.id];
+      dst.tokens[ref.id]={x,y}; if(ref.board===hit.id) dst.sistema=dst.sistema; else dst.sistema=null;
+      activeBoard=hit.id;
+    } else {
+      const src=B(ref.board), tok=src.rival.find(z=>z.id===ref.id);
+      if(hit.id!==ref.board){ src.rival=src.rival.filter(z=>z.id!==ref.id); dst.rival.push({...tok,x,y}); }
+      else { tok.x=x; tok.y=y; }
+    }
+  } else if(ref.board){
+    const b=B(ref.board);
+    if(ref.kind==='own'){ delete b.tokens[ref.id]; say(`${short(byId(ref.id))} fuera de ${b.nombre}`); }
+    else b.rival=b.rival.filter(z=>z.id!==ref.id);
   }
-  if(orig) orig.style.visibility=''; saveBoard(); renderPizarra();
+  if(orig) orig.style.visibility='';
+  saveBoards(); renderPizarra();
 }
 function showPop(ref,anchor){
-  $('#pitch').querySelectorAll('.pop').forEach(p=>p.remove());
-  const pop=document.createElement('div'); pop.className='pop'; const d=tokenData(ref);
-  pop.innerHTML=ref.kind==='own'?`<button data-a="ficha">Ficha</button><button class="bad" data-a="out">Quitar</button>`:`<button data-a="lab">${d.label?'Editar nota':'Añadir nota'}</button><button class="bad" data-a="out">Quitar</button>`;
-  const pr=$('#pitch').getBoundingClientRect(), ar=anchor.getBoundingClientRect();
+  document.querySelectorAll('#boards .pop').forEach(p=>p.remove());
+  const pitch=anchor.parentElement, pop=document.createElement('div'); pop.className='pop';
+  pop.innerHTML=ref.kind==='own'?`<button data-a="ficha">Ficha</button><button class="bad" data-a="out">Quitar</button>`
+    :`<button data-a="lab">Nota</button><button class="bad" data-a="out">Quitar</button>`;
+  const pr=pitch.getBoundingClientRect(), ar=anchor.getBoundingClientRect();
   pop.style.left=clamp(ar.left-pr.left+ar.width/2,70,pr.width-70)+'px'; pop.style.top=(ar.top-pr.top-8)+'px'; pop.style.transform='translate(-50%,-100%)';
   pop.addEventListener('click',ev=>{ const a=ev.target.closest('button')?.dataset.a; if(!a) return;
-    if(a==='out'){ if(ref.kind==='own'){ delete board.tokens[ref.id]; board.sistema=null; } else board.rival=board.rival.filter(z=>z.id!==ref.id); }
-    if(a==='lab'){ const v=prompt('Nota corta para esta ficha rival',d.obj.label||''); if(v!==null) d.obj.label=v.trim(); }
+    const b=B(ref.board);
+    if(a==='out'){ if(ref.kind==='own') delete b.tokens[ref.id]; else b.rival=b.rival.filter(z=>z.id!==ref.id); }
+    if(a==='lab'){ const r=b.rival.find(z=>z.id===ref.id); const v=prompt('Nota corta para esta ficha rival',r.label||''); if(v!==null) r.label=v.trim(); }
     if(a==='ficha'){ pop.remove(); openFicha(ref.id); return; }
-    saveBoard(); renderPizarra(); });
-  $('#pitch').appendChild(pop);
+    saveBoards(); renderPizarra(); });
+  pitch.appendChild(pop);
   setTimeout(()=>document.addEventListener('pointerdown',ev=>{ if(!pop.contains(ev.target)) pop.remove(); },{once:true}),0);
 }
-function fillSlots(slots,pool){ // pool: array de jugadores de esa línea; prefiere subposición
+function fillSlots(slots,pool){
   const used=new Set(), out=[];
-  slots.forEach(s=>{ let p=s[2]?pool.find(q=>!used.has(q._id)&&q.pos===s[2]):null; if(!p) p=pool.find(q=>!used.has(q._id)&&(!s[2]||true)); if(p){ used.add(p._id); out.push([p,s]); } });
+  slots.forEach(s=>{ let p=s[2]?pool.find(q=>!used.has(q._id)&&q.pos===s[2]):null; if(!p) p=pool.find(q=>!used.has(q._id)); if(p){ used.add(p._id); out.push([p,s]); } });
   return out;
 }
-function applyFormation(key){
-  const f=FORM[cfg().fmt][key]; board.tokens={}; let missing=0;
-  ORDER.forEach(L=>{ const pool=players().filter(p=>line(p)===L); const placed=fillSlots(f[L],pool); placed.forEach(([p,s])=>board.tokens[p._id]={x:s[0],y:s[1]}); missing+=f[L].length-placed.length; });
-  board.sistema=key; dropAnim=true; saveBoard(); renderPizarra();
-  say(missing?`${key} colocado · faltan ${missing} jugador${missing>1?'es':''} de esas líneas`:`${key} colocado`);
+function applyFormation(bid,key){
+  const b=B(bid), f=FORM[cfg().fmt][key]; b.tokens={}; let missing=0;
+  ORDER.forEach(L=>{ const pool=players().filter(p=>line(p)===L); const placed=fillSlots(f[L],pool); placed.forEach(([p,s])=>b.tokens[p._id]={x:s[0],y:s[1]}); missing+=f[L].length-placed.length; });
+  b.sistema=key; activeBoard=bid; dropAnim=bid; saveBoards(); renderPizarra();
+  say(missing?`${key} en ${b.nombre} · faltan ${missing} jugador${missing>1?'es':''} de esas líneas`:`${key} en ${b.nombre}`);
 }
-$('#rivAdd').onclick=()=>{ const n=parseInt($('#rivNum').value,10), k=board.rival.length; board.rival.push({id:uid(),num:isNaN(n)?null:n,label:'',x:20+(k%5)*15,y:14+Math.floor(k/5)*10}); $('#rivNum').value=''; saveBoard(); renderPizarra(); };
-$('#rivNum').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#rivAdd').click(); });
-$('#rivClear').onclick=()=>{ board.rival=[]; board.rivalName=null; saveBoard(); renderPizarra(); };
-$('#rivalLoad').onclick=()=>{ const r=T().rivales.find(x=>x._id===$('#rivalPick').value); if(!r){ say('Elige un rival guardado'); return; } placeRival(r); };
 function placeRival(r){
-  const f=FORM[cfg().fmt][r.sistema], toks=[], js=r.jugadores||[];
+  loadBoards(); const b=B(activeBoard)||boards[0], f=FORM[cfg().fmt][r.sistema], toks=[], js=r.jugadores||[];
   if(f){ const pool={}; ORDER.forEach(k=>pool[k]=js.filter(p=>p.pos===k)); ORDER.forEach(L=>f[L].forEach(s=>{ const p=pool[L].shift(); toks.push({id:uid(),num:p?p.dorsal:null,label:p?(p.nombre||''):'',x:100-s[0],y:100-s[1]}); })); }
   else { if(!js.length){ say('Este rival no tiene sistema ni jugadores anotados'); return; } js.slice(0,cfg().fmt).forEach((p,i)=>toks.push({id:uid(),num:p.dorsal,label:p.nombre||'',x:20+(i%5)*15,y:14+Math.floor(i/5)*10})); }
-  loadBoard(); board.rival=toks; board.rivalName=r.nombre; dropAnim=true; saveBoard(); renderPizarra(); say(`${r.nombre} en el campo`);
+  b.rival=toks; b.rivalName=r.nombre; dropAnim=b.id; saveBoards(); renderPizarra(); say(`${r.nombre} en ${b.nombre}`);
 }
-/* dibujo */
+/* ── dibujo ── */
 let tool='move', color='#FFFFFF';
 const COLORS=['#FFFFFF','#FFC940','#EA4C57','#3B8BEB'];
 $('#drawDefs').innerHTML=COLORS.map(c=>`<marker id="ah${c.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 10 5 0 10z" style="fill:${c};stroke:none"/></marker>`).join('');
 const U=p=>[p[0]*cfg().pitch.w/100,p[1]*cfg().pitch.h/100];
-$$('#toolBar button').forEach(b=>b.onclick=()=>{ tool=b.dataset.t; $$('#toolBar button').forEach(x=>x.classList.toggle('on',x===b)); syncMode(); });
-$$('#colBar .col').forEach(b=>b.onclick=()=>{ color=b.dataset.c; $$('#colBar .col').forEach(x=>x.classList.toggle('on',x===b)); if(tool==='move'||tool==='erase'){ tool='arrow'; $$('#toolBar button').forEach(x=>x.classList.toggle('on',x.dataset.t==='arrow')); syncMode(); } });
-function syncMode(){ const p=$('#pitch'); p.classList.toggle('drawing',tool!=='move'&&tool!=='erase'); p.classList.toggle('erasing',tool==='erase'); }
-$('#clearDraw').onclick=()=>{ board.strokes=[]; saveBoard(); renderStrokes(); $('#hint').style.display=(Object.keys(board.tokens).length||board.rival.length)?'none':'grid'; };
-function strokeEl(s){
+$$('#toolBar button').forEach(b=>b.onclick=()=>{ tool=b.dataset.t; $$('#toolBar button').forEach(x=>x.classList.toggle('on',x===b)); boards.forEach(x=>paintBoard(x.id)); });
+$$('#colBar .col').forEach(b=>b.onclick=()=>{ color=b.dataset.c; $$('#colBar .col').forEach(x=>x.classList.toggle('on',x===b));
+  if(tool==='move'||tool==='erase'){ tool='arrow'; $$('#toolBar button').forEach(x=>x.classList.toggle('on',x.dataset.t==='arrow')); boards.forEach(x=>paintBoard(x.id)); } });
+function strokeEl(bid,s){
   const ns='http://www.w3.org/2000/svg', g=document.createElementNS(ns,'g');
-  const mk=()=>{ let el; if(s.t==='free'){ el=document.createElementNS(ns,'polyline'); el.setAttribute('points',s.pts.map(p=>U(p).join(',')).join(' ')); } else { const [a,b]=U(s.pts[0]),[c,d]=U(s.pts[1]); el=document.createElementNS(ns,'line'); el.setAttribute('x1',a);el.setAttribute('y1',b);el.setAttribute('x2',c);el.setAttribute('y2',d); } return el; };
+  const mk=()=>{ let el; if(s.t==='free'){ el=document.createElementNS(ns,'polyline'); el.setAttribute('points',s.pts.map(p=>U(p).join(',')).join(' ')); }
+    else { const [a,b]=U(s.pts[0]),[c,d]=U(s.pts[1]); el=document.createElementNS(ns,'line'); el.setAttribute('x1',a);el.setAttribute('y1',b);el.setAttribute('x2',c);el.setAttribute('y2',d); } return el; };
   const hit=mk(); hit.classList.add('hit'); const vis=mk(); vis.setAttribute('stroke',s.c); if(s.t==='arrow') vis.setAttribute('marker-end',`url(#ah${s.c.slice(1)})`);
   g.appendChild(hit); g.appendChild(vis);
-  hit.addEventListener('pointerdown',e=>{ if(tool!=='erase') return; e.stopPropagation(); board.strokes=board.strokes.filter(x=>x.id!==s.id); saveBoard(); renderStrokes(); });
+  hit.addEventListener('pointerdown',e=>{ if(tool!=='erase') return; e.stopPropagation(); const b=B(bid); b.strokes=b.strokes.filter(x=>x.id!==s.id); saveBoards(); paintBoard(bid); });
   return g;
 }
-function renderStrokes(){ const g=$('#strokes'); g.innerHTML=''; (board?.strokes||[]).forEach(s=>g.appendChild(strokeEl(s))); }
-const pt=e=>{ const r=$('#pitch').getBoundingClientRect(); return [+((e.clientX-r.left)/r.width*100).toFixed(1),+((e.clientY-r.top)/r.height*100).toFixed(1)]; };
-$('#draw').addEventListener('pointerdown',e=>{
+function startStroke(e,bid){
   if(tool==='move'||tool==='erase') return; e.preventDefault();
-  const s={id:uid(),t:tool,c:color,pts:[pt(e),pt(e)]}; let el=strokeEl(s); $('#strokes').appendChild(el);
-  const mv=ev=>{ ev.preventDefault(); const p=pt(ev); if(s.t==='free') s.pts.push(p); else s.pts[1]=p; const n=strokeEl(s); el.replaceWith(n); el=n; };
-  const up=()=>{ window.removeEventListener('pointermove',mv); const len=s.t==='free'?s.pts.length:Math.hypot(s.pts[1][0]-s.pts[0][0],s.pts[1][1]-s.pts[0][1]); if((s.t==='free'&&len<3)||(s.t!=='free'&&len<2)) el.remove(); else { board.strokes.push(s); saveBoard(); $('#hint').style.display='none'; } };
+  const pitch=$(`#boards .pitch[data-b="${bid}"]`), g=pitch.querySelector('.strokes');
+  const pt=ev=>{ const r=pitch.getBoundingClientRect(); return [+((ev.clientX-r.left)/r.width*100).toFixed(1),+((ev.clientY-r.top)/r.height*100).toFixed(1)]; };
+  const s={id:uid(),t:tool,c:color,pts:[pt(e),pt(e)]}; let el=strokeEl(bid,s); g.appendChild(el);
+  const mv=ev=>{ ev.preventDefault(); const p=pt(ev); if(s.t==='free') s.pts.push(p); else s.pts[1]=p; const n=strokeEl(bid,s); el.replaceWith(n); el=n; };
+  const up=()=>{ window.removeEventListener('pointermove',mv);
+    const len=s.t==='free'?s.pts.length:Math.hypot(s.pts[1][0]-s.pts[0][0],s.pts[1][1]-s.pts[0][1]);
+    if((s.t==='free'&&len<3)||(s.t!=='free'&&len<2)) el.remove();
+    else { B(bid).strokes.push(s); saveBoards(); pitch.querySelector('.hint').style.display='none'; } };
   window.addEventListener('pointermove',mv,{passive:false}); window.addEventListener('pointerup',up,{once:true}); window.addEventListener('pointercancel',up,{once:true});
-});
-/* imagen */
-$('#snapBtn').onclick=async()=>{
-  const c=cfg(), {w,h}=c.pitch, sc=14, W=Math.round(w*sc), H=Math.round(h*sc);
+}
+/* ── imagen ── */
+async function snapshot(bid){
+  const b=B(bid), c=cfg(), {w,h}=c.pitch, sc=14, W=Math.round(w*sc), H=Math.round(h*sc);
   const cv=document.createElement('canvas'); cv.width=W; cv.height=H+60; const x=cv.getContext('2d');
   x.fillStyle='#0B1F3A'; x.fillRect(0,0,W,H+60);
   for(let i=0;i<10;i++){ x.fillStyle=i%2?'#2A814F':'#2F8C56'; x.fillRect(0,i*H/10,W,H/10); }
@@ -918,28 +977,40 @@ $('#snapBtn').onclick=async()=>{
   await new Promise(res=>{ img.onload=res; img.onerror=res; img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgTxt); });
   try{ x.drawImage(img,0,0,W,H); }catch(e){}
   const P=(px,py)=>[px/100*W,py/100*H];
-  board.strokes.forEach(s=>{ x.strokeStyle=s.c; x.lineWidth=5; x.lineCap='round'; x.lineJoin='round'; x.beginPath(); s.pts.forEach((p,i)=>{ const [a,b]=P(...p); i?x.lineTo(a,b):x.moveTo(a,b); }); x.stroke();
+  b.strokes.forEach(s=>{ x.strokeStyle=s.c; x.lineWidth=5; x.lineCap='round'; x.lineJoin='round'; x.beginPath(); s.pts.forEach((p,i)=>{ const [a,bb]=P(...p); i?x.lineTo(a,bb):x.moveTo(a,bb); }); x.stroke();
     if(s.t==='arrow'){ const [a1,b1]=P(...s.pts[0]),[a2,b2]=P(...s.pts[1]); const ang=Math.atan2(b2-b1,a2-a1); x.fillStyle=s.c; x.beginPath(); x.moveTo(a2,b2); x.lineTo(a2-16*Math.cos(ang-.5),b2-16*Math.sin(ang-.5)); x.lineTo(a2-16*Math.cos(ang+.5),b2-16*Math.sin(ang+.5)); x.closePath(); x.fill(); } });
-  const tok=(px,py,num,label,bg,fg)=>{ const [a,b]=P(px,py); x.beginPath(); x.arc(a,b,26,0,7); x.fillStyle=bg; x.fill(); x.lineWidth=3; x.strokeStyle='rgba(255,255,255,.92)'; x.stroke(); x.fillStyle=fg; x.font='700 26px "Barlow Condensed",sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(String(num??'·'),a,b+1);
-    if(label){ x.font='600 18px "Barlow Condensed",sans-serif'; const tw=x.measureText(label).width+14; x.fillStyle='rgba(11,31,58,.78)'; x.fillRect(a-tw/2,b+32,tw,24); x.fillStyle='#fff'; x.fillText(label,a,b+44); } };
-  players().filter(p=>board.tokens[p._id]).forEach(p=>tok(board.tokens[p._id].x,board.tokens[p._id].y,dorsal(p),short(p),'#FFFFFF','#0B1F3A'));
-  board.rival.forEach(r=>tok(r.x,r.y,r.num,r.label,'#EA4C57','#fff'));
-  x.fillStyle='#EAF0F8'; x.font='700 28px "Barlow Condensed",sans-serif'; x.textAlign='left'; x.textBaseline='middle'; x.fillText(`${c.label} F${c.fmt}${board.sistema?' · '+board.sistema:''}${board.rivalName?' vs '+board.rivalName:''}`,20,H+30);
+  const tok=(px,py,num,label,bg,fg)=>{ const [a,bb]=P(px,py); x.beginPath(); x.arc(a,bb,26,0,7); x.fillStyle=bg; x.fill(); x.lineWidth=3; x.strokeStyle='rgba(255,255,255,.92)'; x.stroke();
+    x.fillStyle=fg; x.font='700 26px "Barlow Condensed",sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(String(num??'·'),a,bb+1);
+    if(label){ x.font='600 18px "Barlow Condensed",sans-serif'; const tw=x.measureText(label).width+14; x.fillStyle='rgba(11,31,58,.78)'; x.fillRect(a-tw/2,bb+32,tw,24); x.fillStyle='#fff'; x.fillText(label,a,bb+44); } };
+  players().filter(p=>b.tokens[p._id]).forEach(p=>tok(b.tokens[p._id].x,b.tokens[p._id].y,dorsal(p),short(p),'#FFFFFF','#0B1F3A'));
+  b.rival.forEach(r=>tok(r.x,r.y,r.num,r.label,'#EA4C57','#fff'));
+  x.fillStyle='#EAF0F8'; x.font='700 28px "Barlow Condensed",sans-serif'; x.textAlign='left'; x.textBaseline='middle';
+  x.fillText(`${b.nombre} · ${c.label} F${c.fmt}${b.sistema?' · '+b.sistema:''}${b.rivalName?' vs '+b.rivalName:''}`,20,H+30);
   x.fillStyle='#A9BAD3'; x.font='500 20px Barlow,sans-serif'; x.textAlign='right'; x.fillText(fmtDate(todayISO()),W-20,H+30);
-  const url=cv.toDataURL('image/png');
-  if(navigator.share&&navigator.canShare){ try{ const blob=await (await fetch(url)).blob(); const file=new File([blob],`pizarra-${team}-${todayISO()}.png`,{type:'image/png'}); if(navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:'Pizarra'}); return; } }catch(e){ if(e?.name==='AbortError') return; } }
-  const a=document.createElement('a'); a.href=url; a.download=`pizarra-${team}-${todayISO()}.png`; document.body.appendChild(a); a.click(); a.remove(); say('Imagen descargada');
-};
-/* alineaciones guardadas (compartidas por Firestore) */
+  const url=cv.toDataURL('image/png'), name=`${b.nombre.replace(/\s+/g,'-').toLowerCase()}-${todayISO()}.png`;
+  if(navigator.share&&navigator.canShare){ try{ const blob=await (await fetch(url)).blob(); const file=new File([blob],name,{type:'image/png'});
+    if(navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:b.nombre}); return; } }catch(e){ if(e?.name==='AbortError') return; } }
+  const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); say('Imagen descargada');
+}
+/* ── alineaciones guardadas (compartidas) ── */
 $('#lineupsBtn').onclick=()=>{
+  loadBoards();
   const list=[...T().alineaciones].sort((a,b)=>(b.ts||0)-(a.ts||0));
   openSheet('Alineaciones guardadas',`
-    <p class="muted">Guarda la pizarra actual con un nombre para que tu compañero pueda abrirla en la suya, o carga una que hayáis guardado.</p>
-    <div class="row" style="margin-top:12px;gap:8px"><input id="alName" placeholder="Nombre, p. ej. Once vs EFMO Boadilla"><button class="btn" id="alSave"><i class="ti ti-device-floppy"></i>Guardar</button></div>
-    <div class="sec"><h3><i class="ti ti-bookmarks"></i>Guardadas</h3><div class="list" id="alList">${list.length?list.map(a=>`<div class="item" style="cursor:default"><div style="min-width:0"><div class="t">${esc(a.nombre)}</div><div class="s">${a.sistema||'sin sistema'}${a.rivalName?' · vs '+esc(a.rivalName):''} · ${fmtDate(a.fecha)} · ${Object.keys(a.tokens||{}).length} jugadores</div></div><div class="r row" style="gap:6px"><button class="btn ghost sm" data-load="${a._id}">Cargar</button><button class="btn soft sm" data-del="${a._id}"><i class="ti ti-trash"></i></button></div></div>`).join(''):'<div class="empty"><b>Nada guardado todavía</b>Coloca a tu once y guárdalo con un nombre.</div>'}</div></div>`);
-  $('#alSave').onclick=()=>{ const n=$('#alName').value.trim(); if(!n){ say('Ponle un nombre'); return; } write(()=>addDoc(col('alineaciones'),{nombre:n,sistema:board.sistema,rivalName:board.rivalName,tokens:board.tokens,rival:board.rival,strokes:board.strokes,fecha:todayISO(),ts:Date.now()}),'Alineación guardada').then(()=>{ closeSheet(); say('Alineación guardada para los dos'); }); };
-  $$('#alList [data-load]').forEach(b=>b.onclick=()=>{ const a=T().alineaciones.find(x=>x._id===b.dataset.load); loadBoard(); board.tokens={...(a.tokens||{})}; board.sistema=a.sistema||null; board.rivalName=a.rivalName||null; board.rival=(a.rival||[]).map(r=>({...r})); board.strokes=(a.strokes||[]).map(s=>({...s})); dropAnim=true; saveBoard(); closeSheet(); renderPizarra(); say(`"${a.nombre}" cargada`); });
-  $$('#alList [data-del]').forEach(b=>b.onclick=()=>{ if(!confirm('¿Borrar esta alineación guardada?')) return; write(()=>deleteDoc(tdoc('alineaciones',b.dataset.del)),'Borrada').then(()=>$('#lineupsBtn').click()); });
+    <p class="muted">Guarda los campos que tienes ahora mismo con un nombre y tu compañero podrá abrirlos en su pizarra. Al cargar una, sustituye los campos que tengas.</p>
+    <div class="row" style="margin-top:12px;gap:8px"><input id="alName" placeholder="Nombre, p. ej. Plan vs EFMO Boadilla"><button class="btn" id="alSave"><i class="ti ti-device-floppy"></i>Guardar</button></div>
+    <div class="sec"><h3><i class="ti ti-bookmarks"></i>Guardadas</h3><div class="list" id="alList">${list.length?list.map(a=>{
+      const nb=(a.boards||[]).length||1, tot=(a.boards||[{tokens:a.tokens||{}}]).reduce((s,b)=>s+Object.keys(b.tokens||{}).length,0);
+      return `<div class="item" style="cursor:default"><div style="min-width:0"><div class="t">${esc(a.nombre)}</div><div class="s">${nb} campo${nb>1?'s':''} · ${tot} fichas · ${fmtDate(a.fecha)}</div></div><div class="r row" style="gap:6px"><button class="btn ghost sm" data-load="${a._id}">Cargar</button><button class="btn soft sm" data-del="${a._id}"><i class="ti ti-trash"></i></button></div></div>`;
+    }).join(''):'<div class="empty"><b>Nada guardado todavía</b>Coloca a tu once y guárdalo con un nombre.</div>'}</div></div>`);
+  $('#alSave').onclick=()=>{ const n=$('#alName').value.trim(); if(!n){ say('Ponle un nombre'); return; }
+    write(()=>addDoc(col('alineaciones'),{nombre:n,boards:JSON.parse(JSON.stringify(boards)),fecha:todayISO(),ts:Date.now()}),'Alineación guardada').then(()=>{ closeSheet(); say('Guardada para los dos'); }); };
+  $$('#alList [data-load]').forEach(b=>b.onclick=()=>{
+    const a=T().alineaciones.find(x=>x._id===b.dataset.load);
+    boards=(a.boards&&a.boards.length?a.boards:[{nombre:a.nombre||'Campo 1',tokens:a.tokens||{},sistema:a.sistema||null,rival:a.rival||[],rivalName:a.rivalName||null,strokes:a.strokes||[]}]).map(x=>Object.assign(newBoard(),x,{id:uid()}));
+    activeBoard=boards[0].id; dropAnim=boards[0].id; saveBoards(); closeSheet(); renderPizarra(); say(`"${a.nombre}" cargada`); });
+  $$('#alList [data-del]').forEach(b=>b.onclick=()=>{ if(!confirm('¿Borrar esta alineación guardada?')) return;
+    write(()=>deleteDoc(tdoc('alineaciones',b.dataset.del)),'Borrada').then(()=>$('#lineupsBtn').click()); });
 };
 
 /* ═══════════════ PLANTILLA ═══════════════ */
@@ -1111,6 +1182,7 @@ function editMatch(m0){
   const prev={}; (m.players||[]).forEach(x=>prev[x.id]=x);
   const state={}; players().forEach(p=>{ const x=prev[p._id]||{}; state[p._id]={rol:x.rol||'No convocado',minutos:x.minutos||0,goles:x.goles||0,asistencias:x.asistencias||0,valoracion:x.valoracion||0}; });
   const notes=(m0&&T().matchNotes[m0._id])||{};
+  const rv=Object.assign({sistema:'',nivel:'',jugadores:notes.rivalInfo||'',ataque:'',defensa:'',balonParado:'',dano:'',plan:''},notes.rival||{});
   const rows=players().map(p=>{ const s=state[p._id], conv=ROLES_IN.includes(s.rol);
     return `<div class="mrow${conv?' conv':''}" data-id="${p._id}">
       <span class="avatar" style="--pc:${lineVar(p)}">${dorsal(p)}</span>
@@ -1135,10 +1207,25 @@ function editMatch(m0){
       <details style="margin-bottom:8px"><summary>Ver rúbrica de valoración</summary><div class="rubric">${RUBRIC.map((r,i)=>`<div><b style="background:${RUB_COL[i]}">${i+1}</b><span>${r}</span></div>`).join('')}</div></details>
       <div class="card${m.tipo==='Amistoso'?' amistoso':''}" style="padding:4px 10px" id="mRows">${rows||'<p class="faint" style="padding:10px 0">Añade jugadores en Plantilla.</p>'}</div></div>
     <div class="sec"><h3><i class="ti ti-shield"></i>Cómo nos marcaron <small id="concSum"></small></h3><div class="counters card" id="mConc">${counters}</div></div>
-    <div class="sec"><h3><i class="ti ti-notes"></i>Notas del partido</h3>
-      <label class="f">Crónica</label><textarea id="nCron" placeholder="Cómo fue el partido, qué funcionó, qué no…">${esc(notes.cronica||'')}</textarea>
-      <label class="f" style="margin-top:10px">Informe del rival</label><textarea id="nRival" placeholder="Formación, jugadores que destacan, debilidades…">${esc(notes.rivalInfo||'')}</textarea>
-      <label class="f" style="margin-top:10px">Contexto</label><textarea id="nCtx" placeholder="Campo, condiciones, árbitro, incidencias…" style="min-height:56px">${esc(notes.contexto||'')}</textarea></div>
+    <div class="sec"><h3><i class="ti ti-notes"></i>Crónica del partido</h3>
+      <textarea id="nCron" placeholder="Cómo fue el partido, qué funcionó, qué no, momentos clave…" style="min-height:110px">${esc(notes.cronica||'')}</textarea></div>
+    <div class="sec"><h3><i class="ti ti-shield-half"></i>Informe del rival <small>para cuando toque la vuelta</small></h3>
+      <div class="card" style="display:grid;gap:12px">
+        <div class="grid2"><div><label class="f">Sistema que jugaron</label><input id="rSist" value="${esc(rv.sistema||'')}" placeholder="4-4-2, 1-3-2…"></div>
+          <div><label class="f">Nivel del rival</label><select id="rNivel"><option value="">Sin valorar</option>${['Muy inferior','Inferior','Parejo','Superior','Muy superior'].map(x=>`<option${rv.nivel===x?' selected':''}>${x}</option>`).join('')}</select></div></div>
+        <div><label class="f">Jugadores a vigilar</label><textarea id="rJug" placeholder="El 10 es zurdo y organiza; el 7 muy rápido por su banda…">${esc(rv.jugadores||'')}</textarea></div>
+        <div class="grid2">
+          <div><label class="f">Cómo atacan</label><textarea id="rAtq" placeholder="Salen en largo buscando al 9; centros desde la derecha…">${esc(rv.ataque||'')}</textarea></div>
+          <div><label class="f">Cómo defienden</label><textarea id="rDef" placeholder="Presionan arriba, línea adelantada, espacio a la espalda…">${esc(rv.defensa||'')}</textarea></div>
+        </div>
+        <div class="grid2">
+          <div><label class="f">Balón parado</label><textarea id="rBP" placeholder="Córners al primer palo, buen lanzador de falta…">${esc(rv.balonParado||'')}</textarea></div>
+          <div><label class="f">Dónde nos hicieron daño</label><textarea id="rDano" placeholder="Por dentro entre líneas; en transición tras pérdida…">${esc(rv.dano||'')}</textarea></div>
+        </div>
+        <div><label class="f">Sus puntos débiles y plan para la vuelta</label><textarea id="rPlan" placeholder="Qué repetiríamos, qué cambiaríamos, a quién le sacamos ventaja…">${esc(rv.plan||'')}</textarea></div>
+      </div></div>
+    <div class="sec"><h3><i class="ti ti-map-pin"></i>Contexto</h3>
+      <textarea id="nCtx" placeholder="Campo, estado del césped, tiempo, árbitro, incidencias…" style="min-height:56px">${esc(notes.contexto||'')}</textarea></div>
 `,
     `${isNew?'':'<button class="btn danger" id="mDel"><i class="ti ti-trash"></i></button>'}<span style="flex:1"></span><button class="btn accent" id="mSave"><i class="ti ti-device-floppy"></i>Guardar partido</button>`);
   const concSum=()=>{ const n=Object.values(m.gcDesglose).reduce((a,b)=>a+b,0); $('#concSum').textContent=`${n} de ${$('#mGc').value||0} goles explicados`; }; concSum();
@@ -1161,11 +1248,13 @@ function editMatch(m0){
     const rival=$('#mRival').value.trim(); if(!rival){ say('Escribe el rival'); $('#mRival').focus(); return; }
     const pd=players().map(p=>({id:p._id,nombre:p.nombre,apodo:p.apodo||null,dorsal:p.dorsal,pos:p.pos,rol:state[p._id].rol,minutos:state[p._id].minutos,goles:state[p._id].goles,asistencias:state[p._id].asistencias,valoracion:state[p._id].valoracion||null}));
     const data={rival,fecha:$('#mDate').value||todayISO(),local:m.local!==false,tipo:m.tipo||'Liga',gf:Math.max(0,parseInt($('#mGf').value)||0),gc:Math.max(0,parseInt($('#mGc').value)||0),gcDesglose:{...m.gcDesglose},players:pd,ts:m0?.ts||Date.now()};
-    const nt={cronica:$('#nCron').value,rivalInfo:$('#nRival').value,contexto:$('#nCtx').value};
+    const rInfo={sistema:$('#rSist').value.trim(),nivel:$('#rNivel').value,jugadores:$('#rJug').value,ataque:$('#rAtq').value,defensa:$('#rDef').value,balonParado:$('#rBP').value,dano:$('#rDano').value,plan:$('#rPlan').value};
+    const hasRival=Object.values(rInfo).some(v=>v);
+    const nt={cronica:$('#nCron').value,contexto:$('#nCtx').value,rival:rInfo,rivalInfo:[rInfo.jugadores,rInfo.ataque,rInfo.defensa,rInfo.plan].filter(Boolean).join(' · ')};
     await write(async()=>{
       let id=m0?._id;
       if(id) await updateDoc(tdoc('matches',id),data); else id=(await addDoc(col('matches'),data)).id;
-      if(nt.cronica||nt.rivalInfo||nt.contexto) await setDoc(doc(db,'teams',team,'matchNotes','data'),{...T().matchNotes,[id]:nt});
+      if(nt.cronica||nt.contexto||hasRival) await setDoc(doc(db,'teams',team,'matchNotes','data'),{...T().matchNotes,[id]:nt});
       if(!T().rivales.some(r=>r.nombre.toLowerCase()===rival.toLowerCase())) await addDoc(col('rivales'),{nombre:rival,sistema:'',notas:'',jugadores:[]});
     },'Partido guardado');
     closeSheet(); say('Partido guardado');
