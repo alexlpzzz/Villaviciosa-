@@ -222,8 +222,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   .only-mobile{display:grid}
   .pz-side .bchip{touch-action:pan-x}
   .pz-side{order:-1;position:sticky;top:calc(var(--top-h) + 4px);z-index:13;box-shadow:var(--shadow)}
-  .pz-side .bench-list{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-  .pz-side .bench-list::-webkit-scrollbar{display:none}
+  .pz-side .bench-list{flex-wrap:wrap;gap:6px;overflow-x:visible;overflow-y:auto;max-height:34dvh}
+  .pz-side .bchip{font-size:13.5px;padding:3px 11px 3px 3px;gap:6px;flex:0 0 auto}
+  .pz-side .bchip .avatar{width:26px;height:26px;font-size:13px}
+  .pz-side .bchip .avatar::after{width:9px;height:9px}
   .side-rival{grid-template-columns:1fr 1fr}
   #sideSwap{display:none}
 }
@@ -528,8 +530,6 @@ td.pl{cursor:pointer}td.pl:hover b{color:var(--navy-600)}
           <div class="side-h">
             <h3><i class="ti ti-shirt-sport"></i>Jugadores</h3>
             <span class="cnt" id="benchCnt"></span>
-            <button id="benchPrev" class="only-mobile" title="Ver anteriores"><i class="ti ti-chevron-left"></i></button>
-            <button id="benchNext" class="only-mobile" title="Ver siguientes"><i class="ti ti-chevron-right"></i></button>
             <button id="sideSwap" title="Cambiar de lado"><i class="ti ti-arrows-left-right"></i></button>
             <button id="sideFold" title="Plegar"><i class="ti ti-chevron-up"></i></button>
           </div>
@@ -915,9 +915,6 @@ $('#sideSwap').onclick=()=>setSide({left:!$('#pzLayout').classList.contains('lef
 $('#sideFold').onclick=()=>setSide({fold:!$('#pzSide').classList.contains('fold')});
 applySide();
 $$('#scrollPad button').forEach(b=>b.onclick=()=>window.scrollBy({top:(b.dataset.s==='up'?-1:1)*innerHeight*0.72,behavior:'smooth'}));
-const benchScroll=d=>$('#benchList').scrollBy({left:d*$('#benchList').clientWidth*0.8,behavior:'smooth'});
-$('#benchPrev').onclick=()=>benchScroll(-1);
-$('#benchNext').onclick=()=>benchScroll(1);
 $('#addBoard').onclick=()=>{ loadBoards(); const b=newBoard(); boards.push(b); activeBoard=b.id; saveBoards(); renderPizarra(); say('Campo añadido'); };
 
 function paintBoard(id){
