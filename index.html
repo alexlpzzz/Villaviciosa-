@@ -220,14 +220,27 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .only-mobile{display:none}
 @media (max-width:899px){
   .only-mobile{display:grid}
-  .pz-side .bchip{touch-action:pan-x}
-  .pz-side{order:-1;position:sticky;top:calc(var(--top-h) + 4px);z-index:13;box-shadow:var(--shadow)}
-  .pz-side .bench-list{flex-wrap:wrap;gap:6px;overflow-x:visible;overflow-y:auto;max-height:34dvh}
-  .pz-side .bchip{font-size:13.5px;padding:3px 11px 3px 3px;gap:6px;flex:0 0 auto}
+  #sideSwap{display:none}
+  #s-pizarra{padding-bottom:54px}
+  .pz-side{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + var(--safe-b));z-index:24;
+    border-radius:18px 18px 0 0;border:1px solid var(--line);border-bottom:0;box-shadow:0 -10px 30px rgba(11,31,58,.18);
+    padding:6px 12px 10px;max-height:52dvh;display:flex;flex-direction:column;transition:transform .25s var(--ease-drawer)}
+  .side-h{padding:6px 0 4px;position:relative;cursor:pointer}
+  .side-h::before{content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:3px;background:var(--line)}
+  .side-h h3{font-size:17px}
+  .pz-side .bench-list{flex-wrap:wrap;gap:6px;overflow-y:auto;padding-bottom:calc(4px + var(--safe-b));min-height:0}
+  .pz-side .bchip{font-size:13.5px;padding:3px 11px 3px 3px;gap:6px;flex:0 0 auto;touch-action:manipulation}
   .pz-side .bchip .avatar{width:26px;height:26px;font-size:13px}
   .pz-side .bchip .avatar::after{width:9px;height:9px}
-  .side-rival{grid-template-columns:1fr 1fr}
-  #sideSwap{display:none}
+  .pz-side.fold{max-height:none}
+  .pz-side.fold .side-h{padding-bottom:2px}
+  .side-tip{display:none}
+  .pitch-wrap{width:min(100%,calc(58dvh*68/105))}
+  .pitch-wrap.f7{width:min(100%,calc(56dvh*50/70))}
+  .boards.multi{grid-template-columns:minmax(0,1fr)}
+  .boards.multi .pitch-wrap{width:min(100%,calc(56dvh*68/105))}
+  .boards.multi .pitch-wrap.f7{width:min(100%,calc(54dvh*50/70))}
+  .scrollpad{top:auto;bottom:calc(var(--nav-h) + var(--safe-b) + 76px);transform:none}
 }
 .boards{display:grid;gap:14px}
 .boards.multi{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
@@ -312,6 +325,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .item .t{font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:19px}
 .item .s{color:var(--ink-2);font-size:13px;margin-top:2px}
 .item .r{margin-left:auto;text-align:right;flex-shrink:0}
+.item .r .btn{min-width:86px;justify-content:center}
+.item .r .btn .ti{font-size:16px}
 .score{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:24px;letter-spacing:.02em;font-variant-numeric:tabular-nums}
 .score.w{color:var(--ok)}.score.l{color:var(--bad)}.score.d{color:var(--warn)}
 .res{width:26px;height:26px;border-radius:8px;display:inline-grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:14px;color:#fff}
@@ -828,6 +843,7 @@ function renderAlerts(){
 }
 
 /* ═══════════════ PIZARRA ═══════════════ */
+function isMobile(){ return !!(window.matchMedia&&matchMedia('(max-width:899px)').matches); }
 const BK_BOARDS=()=>'vestuario-campos-'+team;
 let boards=[], activeBoard=null, dropAnim=null;
 const newBoard=(n)=>({id:uid(),nombre:n||'Campo '+(boards.length+1),tokens:{},sistema:null,rival:[],rivalName:null,strokes:[]});
@@ -912,10 +928,15 @@ initTok();
 
 const SIDE_KEY='vestuario-side';
 function sideState(){ try{ return JSON.parse(localStorage.getItem(SIDE_KEY)||'{}'); }catch(e){ return {}; } }
-function applySide(){ const st=sideState(); $('#pzLayout').classList.toggle('left',!!st.left); $('#pzSide').classList.toggle('fold',!!st.fold); }
+function folded(){ const st=sideState(); return isMobile()?(st.foldM===undefined?true:!!st.foldM):!!st.fold; }
+function applySide(){ const st=sideState(); $('#pzLayout').classList.toggle('left',!!st.left); $('#pzSide').classList.toggle('fold',folded());
+  const ic=$('#sideFold i'); if(ic) ic.className='ti ti-chevron-'+(folded()?'up':'down'); }
 function setSide(patch){ const st=Object.assign(sideState(),patch); try{ localStorage.setItem(SIDE_KEY,JSON.stringify(st)); }catch(e){} applySide(); }
+function toggleFold(){ setSide(isMobile()?{foldM:!folded()}:{fold:!folded()}); }
 $('#sideSwap').onclick=()=>setSide({left:!$('#pzLayout').classList.contains('left')});
-$('#sideFold').onclick=()=>setSide({fold:!$('#pzSide').classList.contains('fold')});
+$('#sideFold').onclick=toggleFold;
+$('.side-h').addEventListener('click',e=>{ if(isMobile()&&!e.target.closest('button')) toggleFold(); });
+addEventListener('resize',applySide);
 applySide();
 $$('#scrollPad button').forEach(b=>b.onclick=()=>window.scrollBy({top:(b.dataset.s==='up'?-1:1)*innerHeight*0.72,behavior:'smooth'}));
 $('#addBoard').onclick=()=>{ loadBoards(); const b=newBoard(); boards.push(b); activeBoard=b.id; saveBoards(); renderPizarra(); say('Campo añadido'); };
@@ -935,7 +956,10 @@ function renderBench(){
   const c=cfg(), ps=players();
   const placed=id=>boards.filter(b=>b.tokens[id]).length;
   $('#benchCnt').textContent=ps.length?`${ps.length}`:''; $('#benchCnt').title='Jugadores en plantilla';
-  $('#sideTip').textContent=isMobile()?'Toca a un jugador y se coloca en el campo; luego lo arrastras donde quieras. Vuelve a tocarlo para quitarlo.':'Arrastra a cualquier campo; un jugador puede estar en varios a la vez.';
+  $('#sideTip').textContent='Arrastra a cualquier campo; un jugador puede estar en varios a la vez.';
+  const h=$('.side-h h3'); if(h) h.innerHTML=isMobile()
+    ? `<i class="ti ti-shirt-sport"></i>Jugadores <span class="faint" style="font-family:Barlow,sans-serif;font-weight:400;font-size:13px">${folded()?'· toca para abrir':'· toca uno y va al campo'}</span>`
+    : '<i class="ti ti-shirt-sport"></i>Jugadores';
   $('#benchList').innerHTML=ps.length?ps.map(p=>{ const n=placed(p._id);
     return `<div class="bchip${n?' placed':''}" data-id="${p._id}"><span class="avatar" style="--pc:${lineVar(p)}">${dorsal(p)}</span>${esc(short(p))}${n>1?`<span class="tag">×${n}</span>`:''}</div>`; }).join('')
     :`<span class="faint" style="font-size:14px">Añade jugadores en Plantilla.</span>`;
@@ -1032,7 +1056,7 @@ function showPop(ref,anchor){
   pitch.appendChild(pop);
   setTimeout(()=>document.addEventListener('pointerdown',ev=>{ if(!pop.contains(ev.target)) pop.remove(); },{once:true}),0);
 }
-const isMobile=()=>matchMedia('(max-width:899px)').matches;
+
 function freeSpot(b){
   const taken=Object.values(b.tokens), busy=(x,y)=>taken.some(t=>Math.hypot(t.x-x,t.y-y)<7);
   const f=b.sistema&&FORM[cfg().fmt][b.sistema];
@@ -1154,7 +1178,7 @@ $('#lineupsBtn').onclick=()=>{
     <div class="row" style="margin-top:12px;gap:8px"><input id="alName" placeholder="Nombre, p. ej. Plan vs EFMO Boadilla"><button class="btn" id="alSave"><i class="ti ti-device-floppy"></i>Guardar</button></div>
     <div class="sec"><h3><i class="ti ti-bookmarks"></i>Guardadas</h3><div class="list" id="alList">${list.length?list.map(a=>{
       const nb=(a.boards||[]).length||1, tot=(a.boards||[{tokens:a.tokens||{}}]).reduce((s,b)=>s+Object.keys(b.tokens||{}).length,0);
-      return `<div class="item" style="cursor:default"><div style="min-width:0"><div class="t">${esc(a.nombre)}</div><div class="s">${nb} campo${nb>1?'s':''} · ${tot} fichas · ${fmtDate(a.fecha)}</div></div><div class="r row" style="gap:6px"><button class="btn ghost sm" data-load="${a._id}">Cargar</button><button class="btn soft sm" data-del="${a._id}"><i class="ti ti-trash"></i></button></div></div>`;
+      return `<div class="item" style="cursor:default"><div style="min-width:0"><div class="t">${esc(a.nombre)}</div><div class="s">${nb} campo${nb>1?'s':''} · ${tot} fichas · ${fmtDate(a.fecha)}</div></div><div class="r row" style="gap:8px"><button class="btn accent sm" data-load="${a._id}"><i class="ti ti-download"></i>Cargar</button><button class="btn danger sm" data-del="${a._id}" aria-label="Borrar alineación"><i class="ti ti-trash"></i>Borrar</button></div></div>`;
     }).join(''):'<div class="empty"><b>Nada guardado todavía</b>Coloca a tu once y guárdalo con un nombre.</div>'}</div></div>`);
   $('#alSave').onclick=()=>{ const n=$('#alName').value.trim(); if(!n){ say('Ponle un nombre'); return; }
     write(()=>addDoc(col('alineaciones'),{nombre:n,boards:JSON.parse(JSON.stringify(boards)),fecha:todayISO(),ts:Date.now()}),'Alineación guardada').then(()=>{ closeSheet(); say('Guardada para los dos'); }); };
@@ -1162,7 +1186,9 @@ $('#lineupsBtn').onclick=()=>{
     const a=T().alineaciones.find(x=>x._id===b.dataset.load);
     boards=(a.boards&&a.boards.length?a.boards:[{nombre:a.nombre||'Campo 1',tokens:a.tokens||{},sistema:a.sistema||null,rival:a.rival||[],rivalName:a.rivalName||null,strokes:a.strokes||[]}]).map(x=>Object.assign(newBoard(),x,{id:uid()}));
     activeBoard=boards[0].id; dropAnim=boards[0].id; saveBoards(); closeSheet(); renderPizarra(); say(`"${a.nombre}" cargada`); });
-  $$('#alList [data-del]').forEach(b=>b.onclick=()=>{ if(!confirm('¿Borrar esta alineación guardada?')) return;
+  $$('#alList [data-del]').forEach(b=>b.onclick=()=>{
+    const a=T().alineaciones.find(x=>x._id===b.dataset.del);
+    if(!confirm(`¿Borrar "${a?a.nombre:'esta alineación'}"? También desaparece para tu compañero.`)) return;
     write(()=>deleteDoc(tdoc('alineaciones',b.dataset.del)),'Borrada').then(()=>$('#lineupsBtn').click()); });
 };
 
