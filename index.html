@@ -361,6 +361,13 @@ dialog::backdrop{background:rgba(6,16,32,.6);backdrop-filter:blur(3px);-webkit-b
 .mrow select.rol.out{color:var(--ink-3)}
 .mrow .ctl{grid-column:1/-1;display:none;gap:8px;flex-wrap:wrap;padding:2px 0 6px 42px;align-items:center}
 .mrow.conv .ctl{display:flex}
+.minbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;margin-bottom:10px;font-size:14px;font-weight:500;background:var(--panel-2);border:1px solid var(--line-soft)}
+.minbar b{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.minbar .msg{margin-left:auto;font-weight:600}
+.minbar.ok{background:var(--ok-bg);border-color:transparent;color:#145c37}
+.minbar.bad{background:var(--bad-bg);border-color:transparent;color:#8B1E2B}
+.minbar.warn{background:var(--warn-bg);border-color:transparent;color:#7A4A00}
+#mRows.amistoso ~ .minbar,.minbar.off{display:none}
 #mRows.amistoso .mini{display:none}
 .mini{display:flex;align-items:center;gap:2px;background:var(--panel-2);border:1px solid var(--line-soft);border-radius:10px;padding:2px}
 .mini label{font-size:12px;color:var(--ink-3);padding:0 2px 0 8px}
@@ -1378,11 +1385,13 @@ function editMatch(m0){
       <div><label class="f">Fecha</label><input id="mDate" type="date" value="${m.fecha}"></div></div>
     <div class="row" style="margin-top:10px;flex-wrap:wrap;gap:8px">
       <div class="tog" id="mLoc"><button data-l="1" class="${m.local!==false?'on':''}">Local</button><button data-l="0" class="${m.local===false?'on':''}">Visitante</button></div>
-      <div class="tog" id="mTipo"><button data-t="Liga" class="${m.tipo==='Liga'?'on':''}">Liga</button><button data-t="Amistoso" class="${m.tipo==='Amistoso'?'on':''}">Amistoso</button></div></div>
+      <div class="tog" id="mTipo"><button data-t="Liga" class="${m.tipo==='Liga'?'on':''}">Liga</button><button data-t="Amistoso" class="${m.tipo==='Amistoso'?'on':''}">Amistoso</button></div>
+      <div class="mini" title="Duración real del partido"><label>min partido</label><input id="mDur" type="number" inputmode="numeric" min="1" max="120" value="${m.duracion||cfg().minutes}"></div></div>
     <p class="faint" id="tipoHelp" style="font-size:13px;margin-top:8px"></p>
     <div class="scorebox"><div><label>Nosotros</label><input id="mGf" type="number" inputmode="numeric" value="${m.gf}" min="0"></div><span class="vs">–</span><div><label>Rival</label><input id="mGc" type="number" inputmode="numeric" value="${m.gc}" min="0"></div></div>
     <div class="sec"><h3><i class="ti ti-list-details"></i>Convocatoria <small>elige el rol y rellena datos</small></h3>
       <details style="margin-bottom:8px"><summary>Ver rúbrica de valoración</summary><div class="rubric">${RUBRIC.map((r,i)=>`<div><b style="background:${RUB_COL[i]}">${i+1}</b><span>${r}</span></div>`).join('')}</div></details>
+      <div class="minbar" id="minBar"></div>
       <div class="card${m.tipo==='Amistoso'?' amistoso':''}" style="padding:4px 10px" id="mRows">${rows||'<p class="faint" style="padding:10px 0">Añade jugadores en Plantilla.</p>'}</div></div>
     <div class="sec"><h3><i class="ti ti-shield"></i>Cómo nos marcaron <small id="concSum"></small></h3><div class="counters card" id="mConc">${counters}</div></div>
     <div class="sec"><h3><i class="ti ti-notes"></i>Crónica del partido</h3>
@@ -1406,26 +1415,52 @@ function editMatch(m0){
       <textarea id="nCtx" placeholder="Campo, estado del césped, tiempo, árbitro, incidencias…" style="min-height:56px">${esc(notes.contexto||'')}</textarea></div>
 `,
     `${isNew?'':'<button class="btn danger" id="mDel"><i class="ti ti-trash"></i></button>'}<span style="flex:1"></span><button class="btn accent" id="mSave"><i class="ti ti-device-floppy"></i>Guardar partido</button>`);
-  const concSum=()=>{ const n=Object.values(m.gcDesglose).reduce((a,b)=>a+b,0); $('#concSum').textContent=`${n} de ${$('#mGc').value||0} goles explicados`; }; concSum();
+  const durVal=()=>Math.max(1,Math.min(120,parseInt($('#mDur').value,10)||cfg().minutes));
+  const minTarget=()=>durVal()*cfg().fmt;
+  const minUsed=()=>players().reduce((t,p)=>t+(ROLES_IN.includes(state[p._id].rol)?(state[p._id].minutos||0):0),0);
+  function paintMin(){
+    const bar=$('#minBar'); if(!bar) return;
+    const am=m.tipo==='Amistoso', conv=players().filter(p=>ROLES_IN.includes(state[p._id].rol)).length;
+    bar.classList.toggle('off',am);
+    if(am) return;
+    const used=minUsed(), target=minTarget(), diff=target-used;
+    bar.className='minbar '+(conv===0?'':(diff===0?'ok':(Math.abs(diff)<=5?'warn':'bad')));
+    bar.innerHTML=`<span>Minutos repartidos</span><b>${used}</b><span class="faint">de ${target} (${durVal()}' × ${cfg().fmt} jugadores en campo)</span>
+      <span class="msg">${conv===0?'Marca a los convocados':(diff===0?'✓ Cuadra':(diff>0?`Faltan ${diff}'`:`Sobran ${-diff}'`))}</span>`;
+  }
+  $('#mDur').addEventListener('input',paintMin);
+  const concSum=()=>{ const n=Object.values(m.gcDesglose).reduce((a,b)=>a+b,0); $('#concSum').textContent=`${n} de ${$('#mGc').value||0} goles explicados`; }; concSum(); paintMin();
   $('#mGc').addEventListener('input',concSum);
   $$('#mLoc button').forEach(b=>b.onclick=()=>{ m.local=b.dataset.l==='1'; $$('#mLoc button').forEach(x=>x.classList.toggle('on',x===b)); });
   const tipoHelp=()=>{ const am=m.tipo==='Amistoso'; $('#mRows')?.classList.toggle('amistoso',am);
     $('#tipoHelp').textContent=am?'En amistosos solo hace falta marcar quién fue y, si quieres, su valoración. Los minutos y goles no cuentan para las estadísticas de liga.':'Los partidos de liga cuentan para el balance, los puntos y las estadísticas.'; };
   tipoHelp();
-  $$('#mTipo button').forEach(b=>b.onclick=()=>{ m.tipo=b.dataset.t; $$('#mTipo button').forEach(x=>x.classList.toggle('on',x===b)); tipoHelp(); });
+  $$('#mTipo button').forEach(b=>b.onclick=()=>{ m.tipo=b.dataset.t; $$('#mTipo button').forEach(x=>x.classList.toggle('on',x===b)); tipoHelp(); paintMin(); });
   $('#mRows').addEventListener('change',e=>{ const row=e.target.closest('.mrow'); if(!row||e.target.dataset.k!=='rol') return; const s=state[row.dataset.id]; s.rol=e.target.value;
     const conv=ROLES_IN.includes(s.rol); row.classList.toggle('conv',conv); e.target.classList.toggle('out',!conv);
-    if(conv&&!s.minutos&&s.rol==='Titular'){ s.minutos=cfg().minutes; row.querySelector('[data-k="minutos"]').value=s.minutos; } });
+    if(conv&&!s.minutos&&s.rol==='Titular'){ s.minutos=durVal(); row.querySelector('[data-k="minutos"]').value=s.minutos; }
+    if(!conv){ s.minutos=0; const i=row.querySelector('[data-k="minutos"]'); if(i) i.value=0; }
+    paintMin(); });
   $('#mRows').addEventListener('click',e=>{ const b=e.target.closest('.stars button'); if(!b) return; const row=b.closest('.mrow'), s=state[row.dataset.id], v=+b.dataset.v;
     s.valoracion=s.valoracion===v?0:v; row.querySelectorAll('.stars button').forEach(x=>x.classList.toggle('on',+x.dataset.v===s.valoracion)); });
-  $('#mRows').addEventListener('input',e=>{ const row=e.target.closest('.mrow'); if(!row||!e.target.dataset.k||e.target.dataset.k==='rol') return; state[row.dataset.id][e.target.dataset.k]=Math.max(0,parseInt(e.target.value,10)||0); });
+  $('#mRows').addEventListener('input',e=>{ const row=e.target.closest('.mrow'); if(!row||!e.target.dataset.k||e.target.dataset.k==='rol') return;
+    state[row.dataset.id][e.target.dataset.k]=Math.max(0,parseInt(e.target.value,10)||0); if(e.target.dataset.k==='minutos') paintMin(); });
   $('#mConc').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const st=b.parentElement, c=st.dataset.c;
     m.gcDesglose[c]=Math.max(0,(m.gcDesglose[c]||0)+(+b.dataset.d)); const v=m.gcDesglose[c]; st.querySelector('b').textContent=v; st.querySelector('b').classList.toggle('z',!v);
     const tot=Object.values(m.gcDesglose).reduce((a,b2)=>a+b2,0); if((parseInt($('#mGc').value)||0)<tot) $('#mGc').value=tot; concSum(); });
   $('#mSave').onclick=async()=>{
     const rival=$('#mRival').value.trim(); if(!rival){ say('Escribe el rival'); $('#mRival').focus(); return; }
+    const convN=players().filter(p=>ROLES_IN.includes(state[p._id].rol)).length;
+    if(m.tipo!=='Amistoso'&&convN>0){
+      const used=minUsed(), target=minTarget(), diff=target-used;
+      if(diff!==0){
+        const txt=diff>0?`Faltan ${diff} minutos por repartir`:`Te has pasado en ${-diff} minutos`;
+        $('#minBar')?.scrollIntoView({behavior:'smooth',block:'center'});
+        if(!confirm(`${txt}.\n\nEl total tiene que ser ${target} (${durVal()}' × ${cfg().fmt} jugadores en el campo).\n\nSi el partido se acortó o acabasteis con uno menos, cambia los "min partido" de arriba.\n\n¿Guardar aun así?`)) return;
+      }
+    }
     const pd=players().map(p=>({id:p._id,nombre:p.nombre,apodo:p.apodo||null,dorsal:p.dorsal,pos:p.pos,rol:state[p._id].rol,minutos:state[p._id].minutos,goles:state[p._id].goles,asistencias:state[p._id].asistencias,valoracion:state[p._id].valoracion||null}));
-    const data={rival,fecha:$('#mDate').value||todayISO(),local:m.local!==false,tipo:m.tipo||'Liga',gf:Math.max(0,parseInt($('#mGf').value)||0),gc:Math.max(0,parseInt($('#mGc').value)||0),gcDesglose:{...m.gcDesglose},players:pd,ts:m0?.ts||Date.now()};
+    const data={rival,fecha:$('#mDate').value||todayISO(),local:m.local!==false,tipo:m.tipo||'Liga',duracion:durVal(),gf:Math.max(0,parseInt($('#mGf').value)||0),gc:Math.max(0,parseInt($('#mGc').value)||0),gcDesglose:{...m.gcDesglose},players:pd,ts:m0?.ts||Date.now()};
     const rInfo={sistema:$('#rSist').value.trim(),nivel:$('#rNivel').value,jugadores:$('#rJug').value,ataque:$('#rAtq').value,defensa:$('#rDef').value,balonParado:$('#rBP').value,dano:$('#rDano').value,plan:$('#rPlan').value};
     const hasRival=Object.values(rInfo).some(v=>v);
     const nt={cronica:$('#nCron').value,contexto:$('#nCtx').value,rival:rInfo,rivalInfo:[rInfo.jugadores,rInfo.ataque,rInfo.defensa,rInfo.plan].filter(Boolean).join(' · ')};
